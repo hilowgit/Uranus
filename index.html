@@ -779,13 +779,50 @@
             }
         }
         
-        function handleDeleteTrainer(id, name) {
-            confirmDeletion(async () => {
-                const { error } = await supabaseClient.from('trainers').delete().eq('id', id);
-                if (error) Swal.fire('خطأ!', 'خطأ في الحذف.', 'error');
-                else { Swal.fire('تم الحذف!', '', 'success'); fetchTrainers(); }
-            }, `هل أنت متأكد من حذف المدرب "${name}"؟`);
+        // استبدل الدالة القديمة بهذه الدالة الجديدة والمحسّنة
+async function handleDeleteTrainer(id, name) {
+    try {
+        // الخطوة 1: التحقق مما إذا كان المدرب مرتبطاً بأي دورات مجدولة
+        const { count, error: checkError } = await supabaseClient
+            .from('schedules')
+            .select('id', { count: 'exact', head: true }) // نطلب فقط عدد السجلات لتكون العملية سريعة
+            .eq('trainer_id', id);
+
+        if (checkError) {
+            // في حال حدوث خطأ أثناء عملية التحقق نفسها
+            console.error('Error checking for trainer schedules:', checkError);
+            Swal.fire('خطأ!', 'حدث خطأ أثناء التحقق من ارتباطات المدرب.', 'error');
+            return;
         }
+
+        // الخطوة 2: إذا وجدنا أن المدرب مرتبط (العدد أكبر من صفر)
+        if (count > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'لا يمكن الحذف',
+                text: `لا يمكن حذف المدرب "${name}" لأنه لا يزال مرتبطاً بـ (${count}) دورة مجدولة. يجب إزالته من الدورات أولاً ثم المحاولة مجدداً.`,
+                confirmButtonText: 'حسناً'
+            });
+        } else {
+            // الخطوة 3: إذا لم يكن المدرب مرتبطاً بأي دورة، نطلب تأكيد الحذف
+            confirmDeletion(async () => {
+                const { error: deleteError } = await supabaseClient.from('trainers').delete().eq('id', id);
+                
+                if (deleteError) {
+                    console.error('Error deleting trainer:', deleteError);
+                    Swal.fire('خطأ!', 'حدث خطأ غير متوقع أثناء عملية الحذف.', 'error');
+                } else { 
+                    Swal.fire('تم الحذف!', `تم حذف المدرب ${name} بنجاح.`, 'success'); 
+                    fetchTrainers(); // تحديث قائمة المدربين
+                }
+            }, `هل أنت متأكد من حذف المدرب "${name}"؟ هذا الإجراء نهائي ولا يمكن التراجع عنه.`);
+        }
+
+    } catch (e) {
+        console.error('An unexpected error occurred in handleDeleteTrainer:', e);
+        Swal.fire('خطأ كارثي!', 'حدث خطأ غير متوقع. يرجى مراجعة الـ console.', 'error');
+    }
+}
 
         async function fetchTrainees(searchTerm = '') {
             showLoader('trainee-results');
