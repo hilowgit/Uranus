@@ -78,11 +78,20 @@
         .text-primary {
             color: var(--primary-color) !important;
         }
+        
+        /* NEW: Styling for navigation tabs to be purple */
+        .nav-pills .nav-link {
+            color: var(--primary-color); /* Purple color for inactive tabs */
+        }
+        .nav-pills .nav-link:hover, .nav-pills .nav-link:focus {
+            background-color: var(--light-primary); /* Light purple background on hover */
+        }
         .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
-            color: #fff; background-color: var(--primary-color);
-            /* Updated box-shadow to match the new purple color */
+            color: #fff; 
+            background-color: var(--primary-color);
             box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.39);
         }
+
         .form-control:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.25);
@@ -448,10 +457,9 @@
     <script>
         // =================================================================================
         // !! تم وضع بيانات الاتصال الخاصة بك هنا !!
-        // !! تذكر: أضف جدول 'appointments' و 'inventory_items' و 'inventory_transactions'
         // =================================================================================
         const SUPABASE_URL = 'https://sacorfhclmbubtablzuz.supabase.co'; 
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhY29yZmhjbG1idWJ0YWJsenV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4Njk0MjUsImV4cCI6MjA2NjQ0NTQyNX0.OjeACPPo0GJBirnPrfciyhch4XTUUKBBoYFacKRqoh8'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhY29yZmhjbG1idWJ0YWJsenV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4Njk0MjUsImV4cCI6MjA2NjQ0NTQyNX0.OjeACPPo0GJBirnPrfciyhch4XTUUKBBoYFacKRqoh8';
         // =================================================================================
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
