@@ -19,6 +19,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238B5CF6'/><text x='50%' y='50%' dominant-baseline='central' text-anchor='middle' font-size='65' dy='.1em' fill='white' font-family='sans-serif'>U</text></svg>">
+
     <style>
         :root {
             /* Updated to a purple color scheme */
@@ -364,8 +367,8 @@
     </div>
 
     <!-- All Modals -->
-    <div class="modal fade" id="traineeModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="traineeForm"><input type="hidden" name="id"><div class="modal-header"><h5 class="modal-title" id="traineeModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><h6 class="form-section-title">البيانات الشخصية</h6><div class="row g-3"><div class="col-md-6"><label class="form-label">الأسم الثلاثي</label><input type="text" name="full_name" class="form-control" required></div><div class="col-md-6"><label class="form-label">رقم الهاتف</label><input type="text" name="phone" class="form-control"></div><div class="col-12"><label class="form-label">السكن</label><input type="text" name="address" class="form-control"></div><div class="col-md-6"><label class="form-label">الرقم الوطني</label><input type="text" name="national_id" class="form-control"></div><div class="col-md-6"><label class="form-label">التولد</label><input type="date" name="dob" class="form-control"></div><div class="col-md-6"><label class="form-label">أسم الأم</label><input type="text" name="mother_name" class="form-control"></div><div class="col-md-6"><label class="form-label">التحصيل العلمي</label><input type="text" name="education" class="form-control"></div></div><h6 class="form-section-title">تسجيل الكورسات</h6><div class="position-relative"><label class="form-label">ابحث عن كورس لإضافته</label><input type="text" id="course-search-input" class="form-control" placeholder="...ابدأ بكتابة اسم الكورس"><div id="course-search-results-dropdown" class="search-results-dropdown d-none"></div></div><div id="selected-courses-list" class="mt-2"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button><button type="submit" class="btn btn-primary px-4">حفظ</button></div></form></div></div></div>
-    <div class="modal fade" id="trainerModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="trainerForm"><input type="hidden" name="id"><div class="modal-header"><h5 class="modal-title" id="trainerModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><h6 class="form-section-title">البيانات الشخصية</h6><div class="row g-3"><div class="col-md-6"><label class="form-label">الأسم الثلاثي</label><input type="text" name="full_name" class="form-control" required></div><div class="col-md-6"><label class="form-label">رقم الهاتف</label><input type="text" name="phone" class="form-control"></div><div class="col-12"><label class="form-label">السكن</label><input type="text" name="address" class="form-control"></div><div class="col-md-4"><label class="form-label">الرقم الوطني</label><input type="text" name="national_id" class="form-control"></div><div class="col-md-4"><label class="form-label">التولد</label><input type="date" name="dob" class="form-control"></div><div class="col-md-4"><label class="form-label">أسم الأم</label><input type="text" name="mother_name" class="form-control"></div><div class="col-md-6"><label class="form-label">التحصيل العلمي</label><input type="text" name="education" class="form-control"></div><div class="col-md-6"><label class="form-label">الاختصاص التدريبي</label><input type="text" name="specialty" class="form-control"></div><div class="col-12"><label class="form-label">رفع السيرة الذاتية (PDF)</label><input type="file" name="cv_file" class="form-control" accept=".pdf"><small id="currentCv" class="form-text text-primary"></small></div></div><h6 class="form-section-title">بيانات التعاقد</h6><div class="row g-3"><div class="col-md-6"><label class="form-label">تاريخ التعاقد</label><input type="date" name="contract_start_date" class="form-control"></div><div class="col-md-6"><label class="form-label">تاريخ انتهاء العقد</label><input type="date" name="contract_end_date" class="form-control"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button><button type="submit" class="btn btn-primary px-4">حفظ</button></div></form></div></div></div>
+    <div class="modal fade" id="traineeModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="traineeForm"><input type="hidden" name="id"><div class="modal-header"><h5 class="modal-title" id="traineeModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><h6 class="form-section-title">البيانات الشخصية</h6><div class="row g-3"><div class="col-md-6"><label class="form-label">الأسم الثلاثي</label><input type="text" name="fullname" class="form-control" required></div><div class="col-md-6"><label class="form-label">رقم الهاتف</label><input type="text" name="phone" class="form-control"></div><div class="col-12"><label class="form-label">السكن</label><input type="text" name="address" class="form-control"></div><div class="col-md-6"><label class="form-label">الرقم الوطني</label><input type="text" name="national_id" class="form-control"></div><div class="col-md-6"><label class="form-label">التولد</label><input type="date" name="dob" class="form-control"></div><div class="col-md-6"><label class="form-label">أسم الأم</label><input type="text" name="mother_name" class="form-control"></div><div class="col-md-6"><label class="form-label">التحصيل العلمي</label><input type="text" name="education" class="form-control"></div></div><h6 class="form-section-title">تسجيل الكورسات</h6><div class="position-relative"><label class="form-label">ابحث عن كورس لإضافته</label><input type="text" id="course-search-input" class="form-control" placeholder="...ابدأ بكتابة اسم الكورس"><div id="course-search-results-dropdown" class="search-results-dropdown d-none"></div></div><div id="selected-courses-list" class="mt-2"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button><button type="submit" class="btn btn-primary px-4">حفظ</button></div></form></div></div></div>
+    <div class="modal fade" id="trainerModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="trainerForm"><input type="hidden" name="id"><div class="modal-header"><h5 class="modal-title" id="trainerModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><h6 class="form-section-title">البيانات الشخصية</h6><div class="row g-3"><div class="col-md-6"><label class="form-label">الأسم الثلاثي</label><input type="text" name="fullname" class="form-control" required></div><div class="col-md-6"><label class="form-label">رقم الهاتف</label><input type="text" name="phone" class="form-control"></div><div class="col-12"><label class="form-label">السكن</label><input type="text" name="address" class="form-control"></div><div class="col-md-4"><label class="form-label">الرقم الوطني</label><input type="text" name="national_id" class="form-control"></div><div class="col-md-4"><label class="form-label">التولد</label><input type="date" name="dob" class="form-control"></div><div class="col-md-4"><label class="form-label">أسم الأم</label><input type="text" name="mother_name" class="form-control"></div><div class="col-md-6"><label class="form-label">التحصيل العلمي</label><input type="text" name="education" class="form-control"></div><div class="col-md-6"><label class="form-label">الاختصاص التدريبي</label><input type="text" name="specialty" class="form-control"></div><div class="col-12"><label class="form-label">رفع السيرة الذاتية (PDF)</label><input type="file" name="cv_file" class="form-control" accept=".pdf"><small id="currentCv" class="form-text text-primary"></small></div></div><h6 class="form-section-title">بيانات التعاقد</h6><div class="row g-3"><div class="col-md-6"><label class="form-label">تاريخ التعاقد</label><input type="date" name="contract_start_date" class="form-control"></div><div class="col-md-6"><label class="form-label">تاريخ انتهاء العقد</label><input type="date" name="contract_end_date" class="form-control"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button><button type="submit" class="btn btn-primary px-4">حفظ</button></div></form></div></div></div>
     <div class="modal fade" id="scheduleModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="scheduleForm"><input type="hidden" name="id"><div class="modal-header"><h5 class="modal-title" id="scheduleModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
     <h6 class="form-section-title">بيانات الكورس</h6>
     <div class="row g-3">
@@ -447,8 +450,8 @@
         // !! تم وضع بيانات الاتصال الخاصة بك هنا !!
         // !! تذكر: أضف جدول 'appointments' و 'inventory_items' و 'inventory_transactions'
         // =================================================================================
-        const SUPABASE_URL = 'https://sacorfhclmbubtablzuz.supabase.co'; 
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhY29yZmhjbG1idWJ0YWJsenV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4Njk0MjUsImV4cCI6MjA2NjQ0NTQyNX0.OjeACPPo0GJBirnPrfciyhch4XTUUKBBoYFacKRqoh8';
+        const SUPABASE_URL = 'https://oacorfhcinbubtduuz.supabase.co'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hY29yZmhjaW5idWJ0ZHV1eiIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzE5ODI1MzkzLCJleHAiOjIwMzU0MD EzOTN9.eyj0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hY29yZmhjaW5idWJ0ZHV1eiIsIm5hbWUiOiJ1cmFudXNvcmdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTk4MjUzOTMsImV4cCI6MjAzNTQwMTM5M30.7YtH8G1G1z1z1z1z1z1z1z1z1z1z1z1z1z1z1z1z1z1z';
         // =================================================================================
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -542,8 +545,8 @@
 
         async function fetchTrainers(searchTerm = '') {
             showLoader('trainer-results');
-            let query = supabaseClient.from('trainers').select('*').order('full_name');
-            if (searchTerm) query = query.ilike('full_name', `%${searchTerm}%`);
+            let query = supabaseClient.from('trainers').select('*').order('fullname');
+            if (searchTerm) query = query.ilike('fullname', `%${searchTerm}%`);
             const { data, error } = await query;
             if (error) console.error('Error fetching trainers:', error);
             else displayTrainers(data);
@@ -558,9 +561,9 @@
                 <div class="result-card mb-3">
                     <div class="card-actions">
                         <button class="btn btn-sm btn-outline-primary" onclick="openTrainerModal(true, '${trainer.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="handleDeleteTrainer('${trainer.id}', '${trainer.full_name}')" title="حذف"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="handleDeleteTrainer('${trainer.id}', '${trainer.fullname}')" title="حذف"><i class="fas fa-trash"></i></button>
                     </div>
-                    <h5><i class="fas fa-user-tie me-2"></i>${trainer.full_name}</h5>
+                    <h5><i class="fas fa-user-tie me-2"></i>${trainer.fullname}</h5>
                     <p class="mb-1"><i class="fas fa-phone-alt me-2 text-muted"></i>${trainer.phone || 'N/A'}</p>
                     <p class="mb-1"><i class="fas fa-briefcase me-2 text-muted"></i>${trainer.specialty || 'N/A'}</p>
                     <p class="mb-0"><i class="fas fa-file-pdf me-2 text-muted"></i>${trainer.cv_url ? `<a href="${trainer.cv_url}" target="_blank">عرض السيرة الذاتية</a>` : 'لا يوجد'}</p>
@@ -628,8 +631,8 @@
 
         async function fetchTrainees(searchTerm = '') {
             showLoader('trainee-results');
-            let query = supabaseClient.from('trainees').select(`*, trainee_enrollments(courses(name))`).order('full_name');
-            if (searchTerm) query = query.ilike('full_name', `%${searchTerm}%`);
+            let query = supabaseClient.from('trainees').select(`*, trainee_enrollments(courses(name))`).order('fullname');
+            if (searchTerm) query = query.ilike('fullname', `%${searchTerm}%`);
             const { data, error } = await query;
             if (error) console.error('Error fetching trainees:', error);
             else displayTrainees(data);
@@ -646,9 +649,9 @@
                 <div class="result-card mb-3">
                      <div class="card-actions">
                         <button class="btn btn-sm btn-outline-primary" onclick="openTraineeModal(true, '${trainee.id}')"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="handleDeleteTrainee('${trainee.id}', '${trainee.full_name}')"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="handleDeleteTrainee('${trainee.id}', '${trainee.fullname}')"><i class="fas fa-trash"></i></button>
                     </div>
-                    <h5><i class="fas fa-user-graduate me-2"></i>${trainee.full_name}</h5>
+                    <h5><i class="fas fa-user-graduate me-2"></i>${trainee.fullname}</h5>
                     <p class="mb-1"><i class="fas fa-phone-alt me-2 text-muted"></i>${trainee.phone || 'N/A'}</p>
                     <p class="mb-0"><i class="fas fa-book-open me-2 text-muted"></i><strong>الكورسات:</strong> ${enrolledCourses}</p>
                 </div>`;
@@ -761,7 +764,7 @@
         
         async function fetchSchedules(searchTerm = '') {
             showLoader('schedule-results');
-            let query = supabaseClient.from('schedules').select(`*, courses!inner(name), trainers(full_name)`)
+            let query = supabaseClient.from('schedules').select(`*, courses!inner(name), trainers(fullname)`)
                 .order('status', { ascending: true, nullsFirst: false }) 
                 .order('start_date', { ascending: false });
 
@@ -800,7 +803,7 @@
                                 <h5 class="m-0"><i class="fas fa-calendar-check me-2"></i>${schedule.courses ? schedule.courses.name : 'N/A'}</h5>
                                 ${statusBadge}
                             </div>
-                            <p class="mb-1 text-muted small"><i class="fas fa-chalkboard-teacher me-2"></i>${schedule.trainers ? schedule.trainers.full_name : 'N/A'}</p>
+                            <p class="mb-1 text-muted small"><i class="fas fa-chalkboard-teacher me-2"></i>${schedule.trainers ? schedule.trainers.fullname : 'N/A'}</p>
                             <p class="mb-1 text-muted small"><i class="fas fa-map-marker-alt me-2"></i>${schedule.hall_name || 'N/A'}</p>
                             <p class="mb-0 text-muted small"><i class="far fa-clock me-2"></i>${schedule.start_date || '?'} - ${schedule.end_date || '?'}</p>
                         </div>
@@ -849,7 +852,7 @@
 
             if (isEdit) {
                 document.getElementById('scheduleModalTitle').textContent = 'تعديل الموعد';
-                const { data: scheduleData, error: scheduleError } = await supabaseClient.from('schedules').select('*, courses(name), trainers(full_name)').eq('id', id).single();
+                const { data: scheduleData, error: scheduleError } = await supabaseClient.from('schedules').select('*, courses(name), trainers(fullname)').eq('id', id).single();
                 if (scheduleError || !scheduleData) { console.error("Error fetching schedule for edit", scheduleError); return; }
                 
                 Object.keys(scheduleData).forEach(key => {
@@ -870,15 +873,15 @@
                     selectCourseForSchedule(scheduleData.course_id, scheduleData.courses.name);
                 }
                 if (scheduleData.trainers) {
-                    selectTrainerForSchedule(scheduleData.trainer_id, scheduleData.trainers.full_name);
+                    selectTrainerForSchedule(scheduleData.trainer_id, scheduleData.trainers.fullname);
                 }
 
                 if (scheduleData.course_id) {
-                    const { data: enrollments, error: enrollError } = await supabaseClient.from('trainee_enrollments').select('trainees(id, full_name)').eq('course_id', scheduleData.course_id);
+                    const { data: enrollments, error: enrollError } = await supabaseClient.from('trainee_enrollments').select('trainees(id, fullname)').eq('course_id', scheduleData.course_id);
                     if (enrollError) console.error("Error fetching enrollments", enrollError);
                     else if (enrollments) {
                         enrollments.forEach(e => {
-                            if(e.trainees) scheduleSelectedTrainees.set(e.trainees.id, e.trainees.full_name);
+                            if(e.trainees) scheduleSelectedTrainees.set(e.trainees.id, e.trainees.fullname);
                         });
                     }
                 }
@@ -1007,7 +1010,7 @@
                 const status = record ? record.status : 'حاضر'; // Default to present
                 return `
                 <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                    <span>${trainee.full_name}</span>
+                    <span>${trainee.fullname}</span>
                     <div class="btn-group" role="group">
                         <input type="radio" class="btn-check" name="attendance-${trainee.id}" id="present-${trainee.id}" value="حاضر" ${status === 'حاضر' ? 'checked' : ''}>
                         <label class="btn btn-outline-success btn-sm" for="present-${trainee.id}">حاضر</label>
@@ -1055,7 +1058,7 @@
 
             const { data, error } = await supabaseClient
                 .from('trainee_enrollments')
-                .select('trainees(full_name)')
+                .select('trainees(fullname)')
                 .eq('course_id', courseId);
             
             if (error) {
@@ -1070,7 +1073,7 @@
 
             body.innerHTML = `
                 <ul class="list-group list-group-flush">
-                    ${data.map(enrollment => `<li class="list-group-item">${enrollment.trainees.full_name}</li>`).join('')}
+                    ${data.map(enrollment => `<li class="list-group-item">${enrollment.trainees.fullname}</li>`).join('')}
                 </ul>
             `;
         }
@@ -1187,13 +1190,13 @@
 
         // --- NEW Functions for Schedule Trainee Management ---
         async function cacheAllTrainees() {
-            const { data, error } = await supabaseClient.from('trainees').select('id, full_name');
+            const { data, error } = await supabaseClient.from('trainees').select('id, fullname');
             if (error) console.error("Could not cache trainees", error);
             else allTraineesCache = data || [];
         }
 
         async function cacheAllTrainers() {
-            const { data, error } = await supabaseClient.from('trainers').select('id, full_name');
+            const { data, error } = await supabaseClient.from('trainers').select('id, fullname');
             if (error) console.error("Could not cache trainers", error);
             else allTrainersCache = data || [];
         }
@@ -1205,10 +1208,10 @@
                 return;
             }
             const availableTrainees = allTraineesCache.filter(trainee => !scheduleSelectedTrainees.has(trainee.id));
-            const filtered = availableTrainees.filter(t => t.full_name.toLowerCase().includes(searchTerm.toLowerCase()));
+            const filtered = availableTrainees.filter(t => t.fullname.toLowerCase().includes(searchTerm.toLowerCase()));
             
             if(filtered.length > 0) {
-                resultsContainer.innerHTML = `<ul class="list-group">${filtered.map(t => `<li class="list-group-item" onclick="selectTraineeForSchedule('${t.id}', '${t.full_name}')">${t.full_name}</li>`).join('')}</ul>`;
+                resultsContainer.innerHTML = `<ul class="list-group">${filtered.map(t => `<li class="list-group-item" onclick="selectTraineeForSchedule('${t.id}', '${t.fullname}')">${t.fullname}</li>`).join('')}</ul>`;
                 resultsContainer.classList.remove('d-none');
             } else {
                 resultsContainer.classList.add('d-none');
@@ -1265,12 +1268,12 @@
             const courseId = id;
             scheduleSelectedTrainees.clear(); 
             if (courseId) {
-                supabaseClient.from('trainee_enrollments').select('trainees(id, full_name)').eq('course_id', courseId)
+                supabaseClient.from('trainee_enrollments').select('trainees(id, fullname)').eq('course_id', courseId)
                 .then(({ data: enrollments, error }) => {
                     if (error) console.error("Error fetching enrollments for selected course", error);
                     else if (enrollments) {
                         enrollments.forEach(e => {
-                            if (e.trainees) scheduleSelectedTrainees.set(e.trainees.id, e.trainees.full_name);
+                            if (e.trainees) scheduleSelectedTrainees.set(e.trainees.id, e.trainees.fullname);
                         });
                     }
                     renderScheduleSelectedTrainees();
@@ -1286,10 +1289,10 @@
                 resultsContainer.classList.add('d-none');
                 return;
             }
-            const filtered = allTrainersCache.filter(item => item.full_name.toLowerCase().includes(searchTerm.toLowerCase()));
+            const filtered = allTrainersCache.filter(item => item.fullname.toLowerCase().includes(searchTerm.toLowerCase()));
             
             if(filtered.length > 0) {
-                resultsContainer.innerHTML = `<ul class="list-group">${filtered.map(item => `<li class="list-group-item" onclick="selectTrainerForSchedule('${item.id}', '${item.full_name}')">${item.full_name}</li>`).join('')}</ul>`;
+                resultsContainer.innerHTML = `<ul class="list-group">${filtered.map(item => `<li class="list-group-item" onclick="selectTrainerForSchedule('${item.id}', '${item.fullname}')">${item.fullname}</li>`).join('')}</ul>`;
                 resultsContainer.classList.remove('d-none');
             } else {
                 resultsContainer.classList.add('d-none');
