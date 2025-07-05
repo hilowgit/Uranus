@@ -1245,7 +1245,8 @@
                  return;
             }
             listContainer.innerHTML = '';
-            for (const [id, name] of selectedCourses.entries()) {
+            // *** BUG FIX: Iterate over scheduleSelectedTrainees, not selectedCourses ***
+            for (const [id, name] of scheduleSelectedTrainees.entries()) {
                 listContainer.innerHTML += `<div class="selected-tag" data-id="${id}">${name}<button type="button" onclick="removeTraineeFromSchedule('${id}')">&times;</button></div>`;
             }
         }
