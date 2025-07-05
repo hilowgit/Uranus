@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة جمعية أورانوس - لوحة تحكم المشرفين</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Google Fonts for Arabic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Updated to a purple color scheme */
+            --primary-color: #8B5CF6; /* A nice, modern purple */
+            --primary-color-dark: #7C3AED; /* Darker purple for hover */
+            --light-primary: #F5F3FF; /* A very light purple for backgrounds */
+            --background-color: #F9FAFB;
+            --card-bg: #FFFFFF;
+            --text-color: #4B5563;
+            --heading-color: #1F2937;
+            --border-color: #E5E7EB;
+            --danger-color: #EF4444;
+            --completed-bg: #F3F4F6;
+            --appointment-color: #10B981;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+        }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        #app-container, #auth-container { display: none; }
+        .main-container {
+            margin-top: 2rem; margin-bottom: 2rem; padding: 2.5rem;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+        }
+        .auth-form-container { max-width: 450px; margin: 5rem auto; }
+        .app-header {
+            border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        /* --- Overriding Bootstrap with Purple Theme --- */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-color-dark);
+            border-color: var(--primary-color-dark);
+        }
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+            color: #fff; background-color: var(--primary-color);
+            /* Updated box-shadow to match the new purple color */
+            box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.39);
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.25);
+        }
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        /* --- End of Theme Override --- */
+
+        .result-card {
+            border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem;
+            background-color: var(--card-bg); position: relative; transition: all 0.2s ease-in-out;
+        }
+        .result-card.completed {
+            background-color: var(--completed-bg);
+            border-color: #D1D5DB;
+        }
+        .result-card.completed h5, .result-card.completed p {
+             color: var(--text-color);
+        }
+        .result-card:hover {
+            transform: translateY(-4px); box-shadow: 0 4px 20px 0 rgba(0,0,0,0.05);
+        }
+        .modal .modal-header {
+            background-color: var(--light-primary); color: var(--heading-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .form-section-title {
+            font-weight: bold; font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 1rem;
+            color: var(--heading-color); border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;
+        }
+        .form-section-title:first-of-type { margin-top: 0; }
+        .loader { text-align: center; padding: 2rem; }
+        .search-results-dropdown {
+            position: absolute; background: white; border: 1px solid var(--border-color);
+            border-radius: 0.5rem; max-height: 200px; overflow-y: auto;
+            width: 100%; z-index: 1060; /* Higher z-index for search dropdowns */
+        }
+        .search-results-dropdown .list-group-item { cursor: pointer; }
+        .search-results-dropdown .list-group-item:hover { background-color: var(--light-primary); }
+        .selected-tag {
+            display: inline-flex; align-items: center; background-color: var(--light-primary);
+            color: var(--primary-color); padding: 0.25rem 0.75rem; border-radius: 1rem;
+            font-weight: 500; margin: 0.25rem;
+        }
+        .selected-tag button {
+            background: none; border: none; font-size: 1.2rem;
+            margin-right: 0.5rem; color: var(--primary-color);
+        }
+         .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .status-badge {
+            flex-shrink: 0;
+            margin-inline-start: 0.75rem;
+        }
+        .modal-body .form-control:disabled,
+        .modal-body .form-select:disabled,
+        .modal-body .selected-tag button:disabled {
+            background-color: #e9ecef;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* --- Calendar Styles --- */
+        #calendar-container {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        #calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        #calendar-header h3 {
+            margin: 0;
+            font-weight: 700;
+            color: var(--heading-color);
+        }
+        #calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .calendar-day-header, .calendar-day {
+            text-align: center;
+            padding: 0.5rem;
+            font-weight: 500;
+        }
+        .calendar-day-header {
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        .calendar-day {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .calendar-day:hover {
+            background-color: var(--light-primary);
+        }
+        .calendar-day.not-in-month {
+            background-color: var(--background-color);
+            color: #ccc;
+            cursor: default;
+        }
+        .calendar-day .day-number {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        .calendar-day.today .day-number {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .event-dot {
+            width: 100%;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: white;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .event-dot.course { background-color: var(--primary-color); }
+        .event-dot.appointment { background-color: var(--appointment-color); }
+
+        /* --- Inventory Styles --- */
+        .inventory-table th, .inventory-table td {
+            vertical-align: middle;
+            text-align: center;
+            padding: 1rem 0.75rem;
+            border: 1px solid var(--border-color);
+        }
+        .inventory-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .inventory-table thead th {
+            background-color: var(--light-primary);
+            color: var(--heading-color);
+            font-weight: 600;
+        }
+        .inventory-table .item-name-cell {
+            text-align: right;
+            font-weight: bold;
+            color: var(--heading-color);
+        }
+        .inventory-table .actions-cell {
+            text-align: left;
+            width: 180px; 
+        }
+        .inventory-table tbody tr {
+            transition: background-color 0.15s ease-in-out;
+        }
+        .inventory-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .inventory-table .actions-cell .btn {
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background-color: transparent;
+        }
+        .inventory-table .actions-cell .btn:hover {
+            background-color: var(--border-color);
+        }
+        .balance-ok { color: var(--success-color); }
+        .balance-low { color: var(--warning-color); }
+        .balance-danger { color: var(--danger-color); }
+        .d-none {
+            display: none !important;
+        }
+        .clickable {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Auth Container -->
+    <div id="auth-container" class="container">
+        <div class="auth-form-container main-container">
+            <div class="text-center mb-4">
+                <h1 class="h3 mb-3 fw-normal">تسجيل الدخول</h1>
+                <!-- Name Updated -->
+                <p>لوحة تحكم جمعية أورانوس</p>
+            </div>
+            <form id="login-form">
+                <div class="form-floating mb-3"><input type="email" class="form-control" id="login-email" placeholder="name@example.com" required><label for="login-email">البريد الإلكتروني</label></div>
+                <div class="form-floating mb-3"><input type="password" class="form-control" id="login-password" placeholder="Password" required><label for="login-password">كلمة السر</label></div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">تسجيل الدخول</button>
+                <div id="auth-error" class="alert alert-danger mt-3 d-none"></div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Main App Container -->
+    <div id="app-container" class="container main-container">
+        <header class="app-header">
+            <!-- Name Updated -->
+            <div><h1 class="h4 fw-bold m-0">جمعية أورانوس</h1><p class="text-muted m-0">لوحة تحكم المشرفين</p></div>
+            <div><button id="logout-btn" class="btn btn-outline-danger"><i class="fas fa-sign-out-alt me-2"></i>تسجيل الخروج</button></div>
+        </header>
+
+        <main>
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-pills" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation"><button class="nav-link active" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary-panel" type="button"><i class="fas fa-chart-pie me-2"></i>الملخصات</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" id="trainees-tab" data-bs-toggle="tab" data-bs-target="#trainees-panel" type="button"><i class="fas fa-user-graduate me-2"></i>المتدربين</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" id="trainers-tab" data-bs-toggle="tab" data-bs-target="#trainers-panel" type="button"><i class="fas fa-chalkboard-teacher me-2"></i>المدربين</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#schedule-panel" type="button"><i class="fas fa-calendar-alt me-2"></i>الجدولة</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar-panel" type="button"><i class="fas fa-calendar-week me-2"></i>التقويم</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" id="inventory-tab" data-bs-toggle="tab" data-bs-target="#inventory-panel" type="button"><i class="fas fa-boxes-stacked me-2"></i>الجرد</button></li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content pt-4" id="myTabContent">
+                <div class="tab-pane fade show active p-3" id="summary-panel" role="tabpanel"><div id="summary-content"></div></div>
+                <div class="tab-pane fade p-3" id="trainees-panel" role="tabpanel"><div class="d-flex justify-content-between align-items-center mb-4"><h4 class="m-0">قاعدة بيانات المتدربين</h4><button id="addTraineeBtn" class="btn btn-primary"><i class="fas fa-plus me-2"></i>إضافة متدرب</button></div><div class="input-group mb-4"><input type="text" class="form-control" id="trainee-search-input" placeholder="أدخل اسم المتدرب للبحث..."><button class="btn btn-outline-primary" type="button" id="trainee-search-btn"><i class="fas fa-search"></i></button></div><div id="trainee-results" class="mt-4"></div></div>
+                <div class="tab-pane fade p-3" id="trainers-panel" role="tabpanel"><div class="d-flex justify-content-between align-items-center mb-4"><h4 class="m-0">قاعدة بيانات المدربين</h4><button id="addTrainerBtn" class="btn btn-primary"><i class="fas fa-plus me-2"></i>إضافة مدرب</button></div><div class="input-group mb-4"><input type="text" class="form-control" id="trainer-search-input" placeholder="أدخل اسم المدرب للبحث..."><button class="btn btn-outline-primary" type="button" id="trainer-search-btn"><i class="fas fa-search"></i></button></div><div id="trainer-results" class="mt-4"></div></div>
+                <div class="tab-pane fade p-3" id="schedule-panel" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="m-0">جدول مواعيد الكورسات</h4>
+                        <button id="addScheduleBtn" class="btn btn-primary"><i class="fas fa-plus me-2"></i>إضافة موعد</button>
+                    </div>
+                    <div class="input-group mb-4">
+                        <input type="text" class="form-control" id="schedule-search-input" placeholder="أدخل اسم الكورس للبحث...">
+                        <button class="btn btn-outline-primary" type="button" id="schedule-search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div id="schedule-results" class="mt-4"></div>
+                </div>
+                <div class="tab-pane fade p-3" id="calendar-panel" role="tabpanel">
+                    <div id="calendar-container">
+                        <div id="calendar-header">
+                            <button id="prev-month-btn" class="btn btn-outline-primary"><i class="fas fa-chevron-right"></i></button>
+                            <h3 id="month-year-display"></h3>
+                            <button id="next-month-btn" class="btn btn-outline-primary"><i class="fas fa-chevron-left"></i></button>
+                        </div>
+                        <div id="calendar-grid"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade p-3" id="inventory-panel" role="tabpanel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="m-0">إدارة الجرد والمخزون</h4>
+                        <div>
+                            <button id="addInventoryTransactionBtn" class="btn btn-success me-2"><i class="fas fa-exchange-alt me-2"></i>إضافة حركة</button>
+                            <button id="addInventoryItemBtn" class="btn btn-primary"><i class="fas fa-plus me-2"></i>إضافة صنف</button>
+                        </div>
+                    </div>
+                    <div class="input-group mb-4">
+                        <input type="text" class="form-control" id="inventory-search-input" placeholder="أدخل اسم الصنف للبحث...">
+                        <button class="btn btn-outline-primary" type="button" id="inventory-search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div id="inventory-results" class="mt-4 table-responsive"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- All Modals -->
+    <div class="modal fade" id="traineeModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="traineeForm"><input type="hidden" name="id"><div class="modal-header"><h5 class="modal-title" id="traineeModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><h6 class="form-section-title">البيانات الشخصية</h6><div class="row g-3"><div class="col-md-6"><label class="form-label">الأسم الثلاثي</label><input type="text" name="full_name" class="form-control" required></div><div class="col-md-6"><label class="form-label">رقم الهاتف</label><input type="text" name="phone" class="form-control"></div><div class="col-12"><label class="form-label">السكن</label><input type="text" name="address" class="form-control"></div><div class="col-md-6"><label class="form-label">الرقم الوطني</label><input type="text" name="national_id" class="form-control"></div><div class="col-md-6"><label class="form-label">التولد</label><input type="date" name="dob" class="form-control"></div><div class="col-md-6"><label class="form-label">أسم الأم</label><input type="text" name="mother_name" class="form-control"></div><div class="col-md-6"><label class="form-label">التحصيل العلمي</label><input type="text" name="education" class="form-control"></div></div><h6 class="form-section-title">تسجيل الكورسات</h6><div class="position-relative"><label class="form-label">ابحث عن كورس لإضافته</label><input type="text" id="course-search-input" class="form-control" placeholder="...ابدأ بكتابة اسم الكورس"><div id="course-search-results-dropdown" class="search-results-dropdown d-none"></div></div><div id="selected-courses-list" class="mt-2"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button><button type="submit" class="btn btn-primary px-4">حفظ</button></div></form></div></div></div>
+    <div class="modal fade" id="trainerModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="trainerForm"><input type="hidden" name="id"><div class="modal-header"><h5 class="modal-title" id="trainerModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><h6 class="form-section-title">البيانات الشخصية</h6><div class="row g-3"><div class="col-md-6"><label class="form-label">الأسم الثلاثي</label><input type="text" name="full_name" class="form-control" required></div><div class="col-md-6"><label class="form-label">رقم الهاتف</label><input type="text" name="phone" class="form-control"></div><div class="col-12"><label class="form-label">السكن</label><input type="text" name="address" class="form-control"></div><div class="col-md-4"><label class="form-label">الرقم الوطني</label><input type="text" name="national_id" class="form-control"></div><div class="col-md-4"><label class="form-label">التولد</label><input type="date" name="dob" class="form-control"></div><div class="col-md-4"><label class="form-label">أسم الأم</label><input type="text" name="mother_name" class="form-control"></div><div class="col-md-6"><label class="form-label">التحصيل العلمي</label><input type="text" name="education" class="form-control"></div><div class="col-md-6"><label class="form-label">الاختصاص التدريبي</label><input type="text" name="specialty" class="form-control"></div><div class="col-12"><label class="form-label">رفع السيرة الذاتية (PDF)</label><input type="file" name="cv_file" class="form-control" accept=".pdf"><small id="currentCv" class="form-text text-primary"></small></div></div><h6 class="form-section-title">بيانات التعاقد</h6><div class="row g-3"><div class="col-md-6"><label class="form-label">تاريخ التعاقد</label><input type="date" name="contract_start_date" class="form-control"></div><div class="col-md-6"><label class="form-label">تاريخ انتهاء العقد</label><input type="date" name="contract_end_date" class="form-control"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button><button type="submit" class="btn btn-primary px-4">حفظ</button></div></form></div></div></div>
+    <div class="modal fade" id="scheduleModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="scheduleForm"><input type="hidden" name="id"><div class="modal-header"><h5 class="modal-title" id="scheduleModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+    <h6 class="form-section-title">بيانات الكورس</h6>
+    <div class="row g-3">
+        <div class="col-12 position-relative">
+            <label class="form-label">اختر الكورس</label>
+            <input type="text" id="schedule-course-search-input" class="form-control" placeholder="ابحث عن كورس..." autocomplete="off">
+            <div id="schedule-course-search-results" class="search-results-dropdown d-none"></div>
+            <div id="selected-schedule-course-display" class="mt-2"></div>
+            <input type="hidden" name="course_id" required>
+        </div>
+        <div class="col-12 position-relative">
+            <label class="form-label">اختر المدرب</label>
+            <input type="text" id="schedule-trainer-search-input" class="form-control" placeholder="ابحث عن مدرب..." autocomplete="off">
+            <div id="schedule-trainer-search-results" class="search-results-dropdown d-none"></div>
+            <div id="selected-schedule-trainer-display" class="mt-2"></div>
+            <input type="hidden" name="trainer_id" required>
+        </div>
+        <div class="col-md-6"><label class="form-label">اسم القاعة</label><input type="text" name="hall_name" class="form-control"></div>
+        <div class="col-md-6"><label class="form-label">عدد المتدربين</label><input type="number" name="trainee_count" class="form-control"></div>
+    </div>
+    <h6 class="form-section-title">التوقيت والحالة</h6>
+    <div class="row g-3">
+        <div class="col-md-6"><label class="form-label">تاريخ البدء</label><input type="date" name="start_date" class="form-control"></div>
+        <div class="col-md-6"><label class="form-label">تاريخ الانتهاء</label><input type="date" name="end_date" class="form-control"></div>
+        <div class="col-md-6"><label class="form-label">وقت البدء</label><input type="time" name="start_time" class="form-control"></div>
+        <div class="col-md-6"><label class="form-label">وقت الانتهاء</label><input type="time" name="end_time" class="form-control"></div>
+        <div class="col-12"><label class="form-label">أيام الكورس</label><input type="text" name="course_days" class="form-control" placeholder="الأحد - الثلاثاء - الخميس"></div>
+        <div class="col-12 mt-3">
+            <div class="form-check form-switch p-0 d-flex align-items-center">
+                <input class="form-check-input ms-3 me-1" type="checkbox" role="switch" id="courseStatus" name="status" style="transform: scale(1.3);">
+                <label class="form-check-label" for="courseStatus">الكورس منتهي</label>
+                <small class="text-muted me-auto">(عند تفعيل هذا الخيار، سيتم قفل جميع التعديلات)</small>
+            </div>
+        </div>
+    </div>
+    
+    <h6 class="form-section-title">الطلاب المسجلون في الكورس</h6>
+    <div class="position-relative mb-2">
+        <label for="schedule-trainee-search-input" class="form-label visually-hidden">ابحث عن متدرب لإضافته</label>
+        <input type="text" id="schedule-trainee-search-input" class="form-control" placeholder="... ابدأ بكتابة اسم متدرب لإضافته للقائمة">
+        <div id="schedule-trainee-search-results" class="search-results-dropdown d-none"></div>
+    </div>
+    <div id="schedule-selected-trainees-list" class="mt-2 p-2 bg-light rounded" style="min-height: 50px;">
+        <!-- Selected trainees will be rendered here -->
+    </div>
+    
+    <h6 class="form-section-title">تفاصيل إضافية</h6><div class="row g-3"><div class="col-12"><label class="form-label">متقدمون للبورد الألماني (افصل بفاصلة)</label><input type="text" name="german_board_applicants" class="form-control"></div><div class="col-12"><label class="form-label">خطة المسار</label><textarea name="course_plan" class="form-control" rows="3"></textarea></div><div class="col-12"><label class="form-label">المواد المطلوبة</label><textarea name="required_materials" class="form-control" rows="2"></textarea></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button><button type="submit" class="btn btn-primary px-4">حفظ</button></div></form></div></div></div>
+    <div class="modal fade" id="attendanceModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="attendanceForm"><input type="hidden" name="schedule_id"><div class="modal-header"><h5 class="modal-title" id="attendanceModalTitle">أخذ التفقد</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="mb-3"><label for="attendance_date" class="form-label">تاريخ المحاضرة</label><input type="date" name="attendance_date" id="attendance_date" class="form-control" required></div><hr><div id="attendance-student-list"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button><button type="submit" class="btn btn-primary px-4">حفظ التفقد</button></div></form></div></div></div>
+    <div class="modal fade" id="confirmModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header bg-danger text-white"><h5 class="modal-title">تأكيد الحذف</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="confirmModalText"></p></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button><button type="button" class="btn btn-danger" id="confirmDeleteBtn">حذف</button></div></div></div></div>
+    <div class="modal fade" id="appointmentModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><form id="appointmentForm"><input type="hidden" name="id"><div class="modal-header"><h5 class="modal-title" id="appointmentModalTitle">إضافة/تعديل موعد</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+        <div id="day-appointments-list" class="mb-3"></div>
+        <hr/>
+        <h6 class="form-section-title" id="appointment-form-section-title">إضافة موعد جديد</h6>
+        <div class="mb-3"><label class="form-label">عنوان الموعد</label><input type="text" name="title" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label">تاريخ الموعد</label><input type="date" name="appointment_date" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label">الوصف (اختياري)</label><textarea name="description" class="form-control" rows="3"></textarea></div>
+    </div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button><button type="submit" class="btn btn-primary">حفظ الموعد</button></div></form></div></div></div>
+    <div class="modal fade" id="inventoryTransactionModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><form id="inventoryTransactionForm"><input type="hidden" name="id"><div class="modal-header"><h5 class="modal-title" id="inventoryTransactionModalTitle">إضافة حركة مخزون</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+        <div class="mb-3 position-relative">
+            <label class="form-label">الصنف</label>
+            <input type="text" id="inventory-item-search-input" class="form-control" placeholder="ابحث عن صنف..." autocomplete="off">
+            <div id="inventory-item-search-results" class="search-results-dropdown d-none"></div>
+            <div id="selected-inventory-item-display" class="mt-2"></div>
+            <input type="hidden" name="item_id" required>
+        </div>
+        <div class="mb-3"><label class="form-label">نوع الحركة</label><select name="transaction_type" class="form-select" required><option value="in">داخل (شراء)</option><option value="out">خارج (صرف)</option></select></div><div class="mb-3"><label class="form-label">الكمية</label><input type="number" name="quantity" class="form-control" required min="1"></div><div class="mb-3"><label class="form-label">التاريخ</label><input type="date" name="transaction_date" class="form-control" required></div><div class="mb-3"><label class="form-label">البيان (اختياري)</label><input type="text" name="description" class="form-control"></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button><button type="submit" class="btn btn-primary">حفظ الحركة</button></div></form></div></div></div>
+    <div class="modal fade" id="inventoryDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="inventoryDetailModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="inventoryDetailModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button></div></div></div></div>
+    <div class="modal fade" id="courseDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="courseDetailModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="courseDetailModalBody"></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button></div></div></div></div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // =================================================================================
+        // !! تم وضع بيانات الاتصال الخاصة بك هنا !!
+        // !! تذكر: أضف جدول 'appointments' و 'inventory_items' و 'inventory_transactions'
+        // =================================================================================
+        const SUPABASE_URL = 'https://jgvibxicmylwvmeubkdc.supabase.co'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpndmlieGljbXlsd3ZtZXVia2RjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4ODkyODksImV4cCI6MjA2NjQ2NTI4OX0.xq50DkxFGJrrPQ1VWDob6MMaZW4roNcJNY0xjRw5w_0';
+        // =================================================================================
+        
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        const authContainer = document.getElementById('auth-container');
+        const appContainer = document.getElementById('app-container');
+
+        // --- AUTHENTICATION ---
+        const loginForm = document.getElementById('login-form');
+        const logoutBtn = document.getElementById('logout-btn');
+        const authErrorDiv = document.getElementById('auth-error');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) {
+                authErrorDiv.textContent = 'البريد الإلكتروني أو كلمة السر غير صحيحة.';
+                authErrorDiv.classList.remove('d-none');
+            } else {
+                 authErrorDiv.classList.add('d-none');
+                 checkUser();
+            }
+        });
+
+        logoutBtn.addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            checkUser();
+        });
+
+        async function checkUser() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
+                authContainer.style.display = 'none';
+                appContainer.style.display = 'block';
+                initializeApp();
+            } else {
+                authContainer.style.display = 'block';
+                appContainer.style.display = 'none';
+            }
+        }
+        
+        // --- UTILITY FUNCTIONS ---
+        const showLoader = (containerId) => {
+            document.getElementById(containerId).innerHTML = `<div class="loader"><div class="spinner-border text-primary" role="status"></div></div>`;
+        };
+        
+        let deleteFunction = null; 
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        function confirmDeletion(callback, message) {
+            hideAllTooltips();
+            document.getElementById('confirmModalText').textContent = message;
+            deleteFunction = callback;
+            confirmModal.show();
+        }
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (deleteFunction) deleteFunction();
+            confirmModal.hide();
+        });
+
+        const sanitizeData = (data) => {
+            for (const key in data) {
+                if (data[key] === '') data[key] = null;
+            }
+            return data;
+        };
+
+        function hideAllTooltips() {
+            const tooltips = document.querySelectorAll('.tooltip');
+            tooltips.forEach(tooltip => {
+                tooltip.remove();
+            });
+        }
+
+        // --- CORE APP LOGIC ---
+        // Global Caches & State
+        let allCoursesCache = [];
+        let allTraineesCache = [];
+        let allInventoryItemsCache = [];
+        let allTrainersCache = [];
+        let selectedCourses = new Map();
+        let scheduleSelectedTrainees = new Map();
+        let calendarDate = new Date();
+        let lastOpenedDetail = { itemId: null, itemName: null };
+        let transactionModalInstance;
+        let detailModalInstance;
+
+
+        async function fetchTrainers(searchTerm = '') {
+            showLoader('trainer-results');
+            let query = supabaseClient.from('trainers').select('*').order('full_name');
+            if (searchTerm) query = query.ilike('full_name', `%${searchTerm}%`);
+            const { data, error } = await query;
+            if (error) console.error('Error fetching trainers:', error);
+            else displayTrainers(data);
+        }
+
+        function displayTrainers(trainers) {
+            const container = document.getElementById('trainer-results');
+            if (!trainers || trainers.length === 0) {
+                container.innerHTML = `<div class="alert alert-info">لا يوجد مدربين.</div>`; return;
+            }
+            container.innerHTML = trainers.map(trainer => `
+                <div class="result-card mb-3">
+                    <div class="card-actions">
+                        <button class="btn btn-sm btn-outline-primary" onclick="openTrainerModal(true, '${trainer.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="handleDeleteTrainer('${trainer.id}', '${trainer.full_name}')" title="حذف"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <h5><i class="fas fa-user-tie me-2"></i>${trainer.full_name}</h5>
+                    <p class="mb-1"><i class="fas fa-phone-alt me-2 text-muted"></i>${trainer.phone || 'N/A'}</p>
+                    <p class="mb-1"><i class="fas fa-briefcase me-2 text-muted"></i>${trainer.specialty || 'N/A'}</p>
+                    <p class="mb-0"><i class="fas fa-file-pdf me-2 text-muted"></i>${trainer.cv_url ? `<a href="${trainer.cv_url}" target="_blank">عرض السيرة الذاتية</a>` : 'لا يوجد'}</p>
+                </div>
+            `).join('');
+        }
+        
+        const trainerModal = new bootstrap.Modal(document.getElementById('trainerModal'));
+        async function openTrainerModal(isEdit = false, id = null) {
+            hideAllTooltips();
+            const form = document.getElementById('trainerForm');
+            form.reset();
+            document.getElementById('currentCv').textContent = '';
+            form.querySelector('[name="id"]').value = '';
+            if (isEdit) {
+                document.getElementById('trainerModalTitle').textContent = 'تعديل بيانات المدرب';
+                const { data, error } = await supabaseClient.from('trainers').select('*').eq('id', id).single();
+                if (error) return;
+                Object.keys(data).forEach(key => {
+                    const input = form.querySelector(`[name="${key}"]`);
+                    if (input && key !== 'cv_file') input.value = data[key];
+                });
+                if (data.cv_url) document.getElementById('currentCv').textContent = `الملف الحالي: ${data.cv_url.split('/').pop()}`;
+            } else {
+                document.getElementById('trainerModalTitle').textContent = 'إضافة مدرب جديد';
+            }
+            trainerModal.show();
+        }
+        
+        async function handleTrainerFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            let trainerData = Object.fromEntries(formData.entries());
+            const id = trainerData.id;
+            const cvFile = trainerData.cv_file;
+            delete trainerData.cv_file;
+            delete trainerData.id;
+
+            if (cvFile && cvFile.size > 0) {
+                const filePath = `public/${Date.now()}-${cvFile.name}`;
+                const { error: uploadError } = await supabaseClient.storage.from('trainer-cvs').upload(filePath, cvFile);
+                if (uploadError) { alert('خطأ في رفع الملف.'); return; }
+                const { data: urlData } = supabaseClient.storage.from('trainer-cvs').getPublicUrl(filePath);
+                trainerData.cv_url = urlData.publicUrl;
+            }
+
+            const sanitizedData = sanitizeData(trainerData);
+            let response = id ? await supabaseClient.from('trainers').update(sanitizedData).eq('id', id) : await supabaseClient.from('trainers').insert([sanitizedData]);
+            
+            if (response.error) {
+                console.error('Error saving trainer:', response.error); alert('خطأ في حفظ البيانات.');
+            } else {
+                alert('تم الحفظ بنجاح!'); trainerModal.hide(); fetchTrainers();
+            }
+        }
+        
+        function handleDeleteTrainer(id, name) {
+            confirmDeletion(async () => {
+                const { error } = await supabaseClient.from('trainers').delete().eq('id', id);
+                if (error) alert('خطأ في الحذف.');
+                else { alert('تم الحذف.'); fetchTrainers(); }
+            }, `هل أنت متأكد من حذف المدرب "${name}"؟`);
+        }
+
+        async function fetchTrainees(searchTerm = '') {
+            showLoader('trainee-results');
+            let query = supabaseClient.from('trainees').select(`*, trainee_enrollments(courses(name))`).order('full_name');
+            if (searchTerm) query = query.ilike('full_name', `%${searchTerm}%`);
+            const { data, error } = await query;
+            if (error) console.error('Error fetching trainees:', error);
+            else displayTrainees(data);
+        }
+
+        function displayTrainees(trainees) {
+            const container = document.getElementById('trainee-results');
+            if (!trainees || trainees.length === 0) {
+                container.innerHTML = `<div class="alert alert-info">لا يوجد متدربين.</div>`; return;
+            }
+            container.innerHTML = trainees.map(trainee => {
+                const enrolledCourses = trainee.trainee_enrollments.length > 0 ? trainee.trainee_enrollments.map(e => `<span class="badge bg-secondary">${e.courses.name}</span>`).join(' ') : 'لا يوجد';
+                return `
+                <div class="result-card mb-3">
+                     <div class="card-actions">
+                        <button class="btn btn-sm btn-outline-primary" onclick="openTraineeModal(true, '${trainee.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="handleDeleteTrainee('${trainee.id}', '${trainee.full_name}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <h5><i class="fas fa-user-graduate me-2"></i>${trainee.full_name}</h5>
+                    <p class="mb-1"><i class="fas fa-phone-alt me-2 text-muted"></i>${trainee.phone || 'N/A'}</p>
+                    <p class="mb-0"><i class="fas fa-book-open me-2 text-muted"></i><strong>الكورسات:</strong> ${enrolledCourses}</p>
+                </div>`;
+            }).join('');
+        }
+        
+        const traineeModal = new bootstrap.Modal(document.getElementById('traineeModal'));
+        
+        async function openTraineeModal(isEdit = false, id = null) {
+            hideAllTooltips();
+            const form = document.getElementById('traineeForm');
+            form.reset();
+            form.querySelector('[name="id"]').value = id || '';
+            selectedCourses.clear();
+            
+            if (isEdit) {
+                document.getElementById('traineeModalTitle').textContent = 'تعديل بيانات المتدرب';
+                const { data: traineeData } = await supabaseClient.from('trainees').select('*, trainee_enrollments(course_id, courses(name))').eq('id', id).single();
+                if (!traineeData) return;
+                Object.keys(traineeData).forEach(key => {
+                    const input = form.querySelector(`[name="${key}"]`);
+                    if (input) input.value = traineeData[key];
+                });
+
+                traineeData.trainee_enrollments.forEach(enrollment => {
+                    selectedCourses.set(enrollment.course_id, enrollment.courses.name);
+                });
+            } else {
+                document.getElementById('traineeModalTitle').textContent = 'إضافة متدرب جديد';
+            }
+            renderSelectedCourses();
+            traineeModal.show();
+        }
+
+        function renderCourseSearchResults(searchTerm = '') {
+            const resultsContainer = document.getElementById('course-search-results-dropdown');
+            if(!searchTerm) {
+                resultsContainer.classList.add('d-none');
+                return;
+            }
+            const availableCourses = allCoursesCache.filter(course => !selectedCourses.has(course.id));
+            const filtered = availableCourses.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            
+            if(filtered.length > 0) {
+                resultsContainer.innerHTML = `<ul class="list-group">${filtered.map(c => `<li class="list-group-item" onclick="selectCourse('${c.id}', '${c.name}')">${c.name}</li>`).join('')}</ul>`;
+                resultsContainer.classList.remove('d-none');
+            } else {
+                resultsContainer.classList.add('d-none');
+            }
+        }
+
+        function selectCourse(id, name) {
+            selectedCourses.set(id, name);
+            document.getElementById('course-search-input').value = '';
+            document.getElementById('course-search-results-dropdown').classList.add('d-none');
+            renderSelectedCourses();
+        }
+
+        function removeCourse(id) {
+            selectedCourses.delete(id);
+            renderSelectedCourses();
+        }
+
+        function renderSelectedCourses() {
+            const listContainer = document.getElementById('selected-courses-list');
+            listContainer.innerHTML = '';
+            if (selectedCourses.size > 0) {
+                for (const [id, name] of selectedCourses.entries()) {
+                    listContainer.innerHTML += `<div class="selected-tag" data-id="${id}">${name}<button type="button" onclick="removeCourse('${id}')">&times;</button></div>`;
+                }
+            }
+        }
+
+        async function handleTraineeFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const traineeData = {};
+            
+            formData.forEach((value, key) => {
+                traineeData[key] = value;
+            });
+
+            const id = traineeData.id;
+            delete traineeData.id;
+
+            const sanitizedData = sanitizeData(traineeData);
+            let response = id ? await supabaseClient.from('trainees').update(sanitizedData).eq('id', id).select().single() : await supabaseClient.from('trainees').insert([sanitizedData]).select().single();
+            
+            if (response.error) { alert('خطأ في حفظ المتدرب.'); return; }
+            
+            const traineeId = response.data.id;
+            await supabaseClient.from('trainee_enrollments').delete().eq('trainee_id', traineeId);
+            
+            if (selectedCourses.size > 0) {
+                const enrollmentsToInsert = Array.from(selectedCourses.keys()).map(courseId => ({ trainee_id: traineeId, course_id: courseId }));
+                await supabaseClient.from('trainee_enrollments').insert(enrollmentsToInsert);
+            }
+            
+            alert('تم الحفظ بنجاح!'); traineeModal.hide(); fetchTrainees(); fetchSummaryData();
+        }
+        
+        function handleDeleteTrainee(id, name) {
+             confirmDeletion(async () => {
+                const { error } = await supabaseClient.from('trainees').delete().eq('id', id);
+                if (error) alert('خطأ في الحذف.');
+                else { alert('تم الحذف.'); fetchTrainees(); fetchSummaryData(); }
+            }, `هل أنت متأكد من حذف "${name}"؟`);
+        }
+        
+        async function fetchSchedules(searchTerm = '') {
+            showLoader('schedule-results');
+            let query = supabaseClient.from('schedules').select(`*, courses!inner(name), trainers(full_name)`)
+                .order('status', { ascending: true, nullsFirst: false }) 
+                .order('start_date', { ascending: false });
+
+            if (searchTerm) {
+                query = query.ilike('courses.name', `%${searchTerm}%`);
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                console.error('Error fetching schedules:', error);
+                document.getElementById('schedule-results').innerHTML = `<div class="alert alert-danger">حدث خطأ أثناء جلب المواعيد.</div>`;
+            } else {
+                displaySchedules(data);
+            }
+        }
+        
+        function displaySchedules(schedules) {
+            const container = document.getElementById('schedule-results');
+            if (!schedules || schedules.length === 0) {
+                container.innerHTML = `<div class="alert alert-info">لا توجد مواعيد مجدولة تطابق البحث.</div>`;
+                return;
+            }
+            container.innerHTML = schedules.map(schedule => {
+                const isCompleted = schedule.status === 'completed';
+                const statusBadge = isCompleted 
+                    ? `<span class="badge bg-secondary status-badge">منتهي</span>`
+                    : `<span class="badge bg-success status-badge">نشط</span>`;
+
+                return `
+                <div class="result-card mb-3 ${isCompleted ? 'completed' : ''}">
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+                        <!-- Main Content -->
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-2">
+                                <h5 class="m-0"><i class="fas fa-calendar-check me-2"></i>${schedule.courses ? schedule.courses.name : 'N/A'}</h5>
+                                ${statusBadge}
+                            </div>
+                            <p class="mb-1 text-muted small"><i class="fas fa-chalkboard-teacher me-2"></i>${schedule.trainers ? schedule.trainers.full_name : 'N/A'}</p>
+                            <p class="mb-1 text-muted small"><i class="fas fa-map-marker-alt me-2"></i>${schedule.hall_name || 'N/A'}</p>
+                            <p class="mb-0 text-muted small"><i class="far fa-clock me-2"></i>${schedule.start_date || '?'} - ${schedule.end_date || '?'}</p>
+                        </div>
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-column gap-2 flex-shrink-0">
+                            <button class="btn btn-sm btn-success" onclick="openAttendanceModal('${schedule.id}', '${schedule.courses.name}')" title="أخذ التفقد"><i class="fas fa-user-check"></i></button>
+                            <button class="btn btn-sm btn-primary" onclick="openScheduleModal(true, '${schedule.id}')" title="تعديل الموعد"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="handleDeleteSchedule('${schedule.id}', '${schedule.courses ? schedule.courses.name : ''}')" title="حذف الموعد"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+        
+        const scheduleModal = new bootstrap.Modal(document.getElementById('scheduleModal'));
+        
+        function toggleScheduleFormLock(isLocked) {
+            const form = document.getElementById('scheduleForm');
+            const elementsToLock = form.querySelectorAll('.modal-body input:not(#courseStatus), .modal-body select, .modal-body textarea, .modal-body .selected-tag button');
+
+            elementsToLock.forEach(el => {
+                el.disabled = isLocked;
+            });
+            
+            const traineeSearchInput = document.getElementById('schedule-trainee-search-input');
+            if (traineeSearchInput) {
+                traineeSearchInput.disabled = isLocked;
+            }
+        }
+
+        async function openScheduleModal(isEdit = false, id = null) {
+            hideAllTooltips();
+            const form = document.getElementById('scheduleForm');
+            form.reset();
+            form.querySelector('[name="id"]').value = '';
+            
+            // Clear search/select fields
+            document.getElementById('selected-schedule-course-display').innerHTML = '';
+            document.getElementById('selected-schedule-trainer-display').innerHTML = '';
+            document.getElementById('schedule-course-search-input').value = '';
+            document.getElementById('schedule-trainer-search-input').value = '';
+            
+            scheduleSelectedTrainees.clear();
+            document.getElementById('schedule-trainee-search-input').value = '';
+
+            if (isEdit) {
+                document.getElementById('scheduleModalTitle').textContent = 'تعديل الموعد';
+                const { data: scheduleData, error: scheduleError } = await supabaseClient.from('schedules').select('*, courses(name), trainers(full_name)').eq('id', id).single();
+                if (scheduleError || !scheduleData) { console.error("Error fetching schedule for edit", scheduleError); return; }
+                
+                Object.keys(scheduleData).forEach(key => {
+                    const input = form.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        if (key === 'status') {
+                            input.checked = (scheduleData[key] === 'completed');
+                        } else if(key === 'german_board_applicants' && Array.isArray(scheduleData[key])) {
+                            input.value = scheduleData[key].join(', ');
+                        } else {
+                            input.value = scheduleData[key];
+                        }
+                    }
+                });
+
+                // Set selected course and trainer
+                if (scheduleData.courses) {
+                    selectCourseForSchedule(scheduleData.course_id, scheduleData.courses.name);
+                }
+                if (scheduleData.trainers) {
+                    selectTrainerForSchedule(scheduleData.trainer_id, scheduleData.trainers.full_name);
+                }
+
+                if (scheduleData.course_id) {
+                    const { data: enrollments, error: enrollError } = await supabaseClient.from('trainee_enrollments').select('trainees(id, full_name)').eq('course_id', scheduleData.course_id);
+                    if (enrollError) console.error("Error fetching enrollments", enrollError);
+                    else if (enrollments) {
+                        enrollments.forEach(e => {
+                            if(e.trainees) scheduleSelectedTrainees.set(e.trainees.id, e.trainees.full_name);
+                        });
+                    }
+                }
+                toggleScheduleFormLock(scheduleData.status === 'completed');
+            } else {
+                document.getElementById('scheduleModalTitle').textContent = 'إضافة موعد جديد';
+                toggleScheduleFormLock(false); // Unlock for new entries
+            }
+            
+            renderScheduleSelectedTrainees();
+            scheduleModal.show();
+        }
+
+        async function handleScheduleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            let scheduleData = Object.fromEntries(formData.entries());
+            const id = scheduleData.id;
+            delete scheduleData.id;
+            
+            if (!scheduleData.course_id || !scheduleData.trainer_id) {
+                alert('الرجاء اختيار كورس ومدرب.');
+                return;
+            }
+
+            scheduleData.status = form.querySelector('[name="status"]').checked ? 'completed' : 'active';
+
+            if (scheduleData.german_board_applicants) scheduleData.german_board_applicants = scheduleData.german_board_applicants.split(',').map(s => s.trim());
+            else scheduleData.german_board_applicants = [];
+
+            const sanitizedData = sanitizeData(scheduleData);
+            
+            const { data: savedSchedule, error: scheduleError } = id 
+                ? await supabaseClient.from('schedules').update(sanitizedData).eq('id', id).select().single()
+                : await supabaseClient.from('schedules').insert([sanitizedData]).select().single();
+            
+            if (scheduleError) { console.error(scheduleError); alert('خطأ في حفظ الموعد.'); return; }
+
+            // Only update enrollments if the course is not completed
+            if (savedSchedule.status !== 'completed') {
+                const courseId = savedSchedule.course_id;
+                if (!courseId) {
+                    alert('تم حفظ الموعد، ولكن لم يتم تحديد كورس لتحديث قائمة الطلاب.');
+                    scheduleModal.hide(); fetchSchedules(); return;
+                }
+
+                const { data: currentEnrollmentsData } = await supabaseClient.from('trainee_enrollments').select('trainee_id').eq('course_id', courseId);
+                const currentTraineeIds = new Set(currentEnrollmentsData.map(e => e.trainee_id));
+                const newTraineeIds = new Set(scheduleSelectedTrainees.keys());
+
+                const traineesToAdd = [...newTraineeIds].filter(tid => !currentTraineeIds.has(tid));
+                const traineesToRemove = [...currentTraineeIds].filter(tid => !newTraineeIds.has(tid));
+
+                if (traineesToRemove.length > 0) {
+                    await supabaseClient.from('trainee_enrollments').delete().eq('course_id', courseId).in('trainee_id', traineesToRemove);
+                }
+                
+                if (traineesToAdd.length > 0) {
+                    const enrollmentsToInsert = traineesToAdd.map(traineeId => ({ course_id: courseId, trainee_id: traineeId }));
+                    await supabaseClient.from('trainee_enrollments').insert(enrollmentsToInsert);
+                }
+            }
+
+            alert('تم الحفظ بنجاح!');
+            scheduleModal.hide();
+            fetchSchedules();
+            fetchTrainees();
+        }
+        
+        function handleDeleteSchedule(id, name) {
+            confirmDeletion(async () => {
+                const { error } = await supabaseClient.from('schedules').delete().eq('id', id);
+                if (error) alert('خطأ في الحذف.');
+                else { alert('تم الحذف.'); fetchSchedules(); }
+            }, `هل أنت متأكد من حذف موعد "${name}"؟`);
+        }
+        
+        const attendanceModal = new bootstrap.Modal(document.getElementById('attendanceModal'));
+        
+        function getTodayDateString() {
+            const todayDate = new Date();
+            const year = todayDate.getFullYear();
+            const month = String(todayDate.getMonth() + 1).padStart(2, '0');
+            const day = String(todayDate.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        async function openAttendanceModal(scheduleId, courseName) {
+            hideAllTooltips();
+            const form = document.getElementById('attendanceForm');
+            form.reset();
+            form.querySelector('[name="schedule_id"]').value = scheduleId;
+            document.getElementById('attendanceModalTitle').textContent = `تفقد كورس: ${courseName}`;
+            
+            const today = getTodayDateString();
+            const dateInput = document.getElementById('attendance_date');
+            dateInput.value = today;
+
+            await loadAttendanceForDate(scheduleId, today);
+            
+            attendanceModal.show();
+        }
+
+        async function loadAttendanceForDate(scheduleId, date) {
+            const studentListDiv = document.getElementById('attendance-student-list');
+            studentListDiv.innerHTML = '<div class="spinner-border spinner-border-sm"></div>';
+
+            const { data: scheduleData } = await supabaseClient.from('schedules').select('courses(id)').eq('id', scheduleId).single();
+            if (!scheduleData) { studentListDiv.innerHTML = 'خطأ: لم يتم العثور على الكورس.'; return; }
+            
+            const { data: enrollments } = await supabaseClient.from('trainee_enrollments').select('trainees(*)').eq('course_id', scheduleData.courses.id);
+            if (!enrollments) { studentListDiv.innerHTML = 'خطأ في جلب الطلاب.'; return; }
+
+            const { data: attendanceRecords } = await supabaseClient.from('attendance').select('*').eq('schedule_id', scheduleId).eq('attendance_date', date);
+            
+            if (enrollments.length === 0) {
+                 studentListDiv.innerHTML = '<div class="alert alert-info">لا يوجد طلاب مسجلين في هذا الكورس.</div>';
+                 return;
+            }
+
+            studentListDiv.innerHTML = enrollments.map(enrollment => {
+                const trainee = enrollment.trainees;
+                if (!trainee) return ''; // Skip if trainee data is missing
+                const record = attendanceRecords ? attendanceRecords.find(r => r.trainee_id === trainee.id) : null;
+                const status = record ? record.status : 'حاضر'; // Default to present
+                return `
+                <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                    <span>${trainee.full_name}</span>
+                    <div class="btn-group" role="group">
+                        <input type="radio" class="btn-check" name="attendance-${trainee.id}" id="present-${trainee.id}" value="حاضر" ${status === 'حاضر' ? 'checked' : ''}>
+                        <label class="btn btn-outline-success btn-sm" for="present-${trainee.id}">حاضر</label>
+                        <input type="radio" class="btn-check" name="attendance-${trainee.id}" id="absent-${trainee.id}" value="غائب" ${status === 'غائب' ? 'checked' : ''}>
+                        <label class="btn btn-outline-danger btn-sm" for="absent-${trainee.id}">غائب</label>
+                        <input type="radio" class="btn-check" name="attendance-${trainee.id}" id="late-${trainee.id}" value="متأخر" ${status === 'متأخر' ? 'checked' : ''}>
+                        <label class="btn btn-outline-warning btn-sm" for="late-${trainee.id}">متأخر</label>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+        
+        document.getElementById('attendance_date').addEventListener('change', (e) => {
+            const scheduleId = document.getElementById('attendanceForm').querySelector('[name="schedule_id"]').value;
+            loadAttendanceForDate(scheduleId, e.target.value);
+        });
+
+        async function handleAttendanceFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const schedule_id = formData.get('schedule_id');
+            const attendance_date = formData.get('attendance_date');
+            
+            const records = [];
+            for (const [key, value] of formData.entries()) {
+                if (key.startsWith('attendance-')) {
+                    const trainee_id = key.split('-')[1];
+                    records.push({ schedule_id, trainee_id, attendance_date, status: value });
+                }
+            }
+
+            const { error } = await supabaseClient.from('attendance').upsert(records, { onConflict: 'schedule_id,trainee_id,attendance_date' });
+            if (error) { console.error('Error saving attendance:', error); alert('خطأ في حفظ التفقد.'); } 
+            else { alert('تم حفظ التفقد بنجاح!'); attendanceModal.hide(); }
+        }
+        
+        const courseDetailModal = new bootstrap.Modal(document.getElementById('courseDetailModal'));
+        async function openCourseDetailModal(courseId, courseName) {
+            hideAllTooltips();
+            document.getElementById('courseDetailModalTitle').textContent = `الطلاب المسجلون في: ${courseName}`;
+            const body = document.getElementById('courseDetailModalBody');
+            body.innerHTML = '<div class="loader"><div class="spinner-border text-primary" role="status"></div></div>';
+            courseDetailModal.show();
+
+            const { data, error } = await supabaseClient
+                .from('trainee_enrollments')
+                .select('trainees(full_name)')
+                .eq('course_id', courseId);
+            
+            if (error) {
+                body.innerHTML = '<div class="alert alert-danger">خطأ في جلب بيانات الطلاب.</div>';
+                return;
+            }
+
+            if (data.length === 0) {
+                body.innerHTML = '<div class="alert alert-info">لا يوجد طلاب مسجلون في هذا الكورس حالياً.</div>';
+                return;
+            }
+
+            body.innerHTML = `
+                <ul class="list-group list-group-flush">
+                    ${data.map(enrollment => `<li class="list-group-item">${enrollment.trainees.full_name}</li>`).join('')}
+                </ul>
+            `;
+        }
+
+        async function fetchSummaryData() {
+            showLoader('summary-content');
+            
+            // Fetch all data in parallel
+            const [
+                { count: traineeCount },
+                { data: courses },
+                { data: enrollments }
+            ] = await Promise.all([
+                supabaseClient.from('trainees').select('*', { count: 'exact', head: true }),
+                supabaseClient.from('courses').select('*').order('name'),
+                supabaseClient.from('trainee_enrollments').select('course_id, courses(name)')
+            ]);
+            
+            allCoursesCache = courses || [];
+
+            // Calculate popular courses
+            const courseCounts = {};
+            if (enrollments) {
+                enrollments.forEach(enrollment => {
+                    if (enrollment.courses) {
+                        const courseId = enrollment.course_id;
+                        const courseName = enrollment.courses.name;
+                        if (!courseCounts[courseId]) {
+                            courseCounts[courseId] = { name: courseName, count: 0 };
+                        }
+                        courseCounts[courseId].count++;
+                    }
+                });
+            }
+            const popularCourses = Object.entries(courseCounts)
+                .map(([id, data]) => ({ id, ...data }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 5); // Get top 5
+
+            // Render summary content
+            document.getElementById('summary-content').innerHTML = `
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card text-center h-100 shadow-sm">
+                            <div class="card-body p-4 d-flex flex-column justify-content-center">
+                                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title h4">إجمالي الطلاب</h5>
+                                <p class="display-4 fw-bold m-0">${traineeCount || 0}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body p-4">
+                                <h5 class="card-title text-center mb-3">الكورسات الأكثر طلباً</h5>
+                                <div id="popular-courses-list">
+                                    ${popularCourses.length > 0 ? `
+                                        <ul class="list-group list-group-flush">
+                                            ${popularCourses.map(course => `
+                                                <li class="list-group-item d-flex justify-content-between align-items-center clickable" onclick="openCourseDetailModal('${course.id}', '${course.name}')">
+                                                    ${course.name}
+                                                    <span class="badge bg-primary rounded-pill">${course.count}</span>
+                                                </li>
+                                            `).join('')}
+                                        </ul>
+                                    ` : '<p class="text-center text-muted">لا توجد بيانات تسجيل لعرضها.</p>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12">
+                         <div class="card h-100 shadow-sm">
+                            <div class="card-body p-4">
+                                <h5 class="card-title text-center">إدارة الكورسات</h5>
+                                <form id="addCourseForm" class="d-flex mt-3 mb-3">
+                                    <input type="text" name="name" class="form-control me-2" placeholder="اسم الكورس الجديد" required>
+                                    <button type="submit" class="btn btn-success flex-shrink-0">إضافة</button>
+                                </form>
+                                <ul id="coursesList" class="list-group list-group-flush">
+                                    ${courses && courses.length > 0 ? courses.map(c => `<li class="list-group-item d-flex justify-content-between align-items-center">${c.name}<button class="btn btn-sm btn-outline-danger" onclick="handleDeleteCourse('${c.id}', '${c.name}')"><i class="fas fa-trash"></i></button></li>`).join('') : '<li class="list-group-item">لا توجد كورسات.</li>'}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            document.getElementById('addCourseForm').addEventListener('submit', handleAddCourse);
+        }
+
+        async function handleAddCourse(event) {
+            event.preventDefault();
+            const form = event.target;
+            const courseName = new FormData(form).get('name');
+            const { error } = await supabaseClient.from('courses').insert([{ name: courseName }]);
+            if (error) alert(`خطأ: ${error.message}`);
+            else { 
+                alert('تمت الإضافة!'); 
+                form.reset(); 
+                fetchSummaryData(); 
+            }
+        }
+        
+        function handleDeleteCourse(id, name) {
+            confirmDeletion(async () => {
+                const { error } = await supabaseClient.from('courses').delete().eq('id', id);
+                if (error) alert('خطأ في الحذف، قد يكون الكورس مرتبطاً بجدول.');
+                else { 
+                    alert('تم الحذف.'); 
+                    fetchSummaryData(); 
+                }
+            }, `هل أنت متأكد من حذف كورس "${name}"؟`);
+        }
+
+        // --- NEW Functions for Schedule Trainee Management ---
+        async function cacheAllTrainees() {
+            const { data, error } = await supabaseClient.from('trainees').select('id, full_name');
+            if (error) console.error("Could not cache trainees", error);
+            else allTraineesCache = data || [];
+        }
+
+        async function cacheAllTrainers() {
+            const { data, error } = await supabaseClient.from('trainers').select('id, full_name');
+            if (error) console.error("Could not cache trainers", error);
+            else allTrainersCache = data || [];
+        }
+
+        function renderScheduleTraineeSearchResults(searchTerm = '') {
+            const resultsContainer = document.getElementById('schedule-trainee-search-results');
+            if(!searchTerm) {
+                resultsContainer.classList.add('d-none');
+                return;
+            }
+            const availableTrainees = allTraineesCache.filter(trainee => !scheduleSelectedTrainees.has(trainee.id));
+            const filtered = availableTrainees.filter(t => t.full_name.toLowerCase().includes(searchTerm.toLowerCase()));
+            
+            if(filtered.length > 0) {
+                resultsContainer.innerHTML = `<ul class="list-group">${filtered.map(t => `<li class="list-group-item" onclick="selectTraineeForSchedule('${t.id}', '${t.full_name}')">${t.full_name}</li>`).join('')}</ul>`;
+                resultsContainer.classList.remove('d-none');
+            } else {
+                resultsContainer.classList.add('d-none');
+            }
+        }
+
+        function selectTraineeForSchedule(id, name) {
+            scheduleSelectedTrainees.set(id, name);
+            document.getElementById('schedule-trainee-search-input').value = '';
+            document.getElementById('schedule-trainee-search-results').classList.add('d-none');
+            renderScheduleSelectedTrainees();
+        }
+
+        function removeTraineeFromSchedule(id) {
+            scheduleSelectedTrainees.delete(id);
+            renderScheduleSelectedTrainees();
+        }
+
+        function renderScheduleSelectedTrainees() {
+            const listContainer = document.getElementById('schedule-selected-trainees-list');
+            if (scheduleSelectedTrainees.size === 0) {
+                 listContainer.innerHTML = '<p class="text-muted small m-0">لم يتم اختيار طلاب بعد. استخدم البحث أعلاه للإضافة.</p>';
+                 return;
+            }
+            listContainer.innerHTML = '';
+            for (const [id, name] of selectedCourses.entries()) {
+                listContainer.innerHTML += `<div class="selected-tag" data-id="${id}">${name}<button type="button" onclick="removeTraineeFromSchedule('${id}')">&times;</button></div>`;
+            }
+        }
+        
+        function renderScheduleCourseSearchResults(searchTerm) {
+            const resultsContainer = document.getElementById('schedule-course-search-results');
+            if(!searchTerm) {
+                resultsContainer.classList.add('d-none');
+                return;
+            }
+            const filtered = allCoursesCache.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            
+            if(filtered.length > 0) {
+                resultsContainer.innerHTML = `<ul class="list-group">${filtered.map(item => `<li class="list-group-item" onclick="selectCourseForSchedule('${item.id}', '${item.name}')">${item.name}</li>`).join('')}</ul>`;
+                resultsContainer.classList.remove('d-none');
+            } else {
+                resultsContainer.classList.add('d-none');
+            }
+        }
+
+        function selectCourseForSchedule(id, name) {
+            document.querySelector('#scheduleForm [name="course_id"]').value = id;
+            document.getElementById('selected-schedule-course-display').innerHTML = `<span class="badge bg-primary">${name}</span>`;
+            document.getElementById('schedule-course-search-input').value = '';
+            document.getElementById('schedule-course-search-results').classList.add('d-none');
+            
+            // Auto-load enrolled trainees for the selected course
+            const courseId = id;
+            scheduleSelectedTrainees.clear(); 
+            if (courseId) {
+                supabaseClient.from('trainee_enrollments').select('trainees(id, full_name)').eq('course_id', courseId)
+                .then(({ data: enrollments, error }) => {
+                    if (error) console.error("Error fetching enrollments for selected course", error);
+                    else if (enrollments) {
+                        enrollments.forEach(e => {
+                            if (e.trainees) scheduleSelectedTrainees.set(e.trainees.id, e.trainees.full_name);
+                        });
+                    }
+                    renderScheduleSelectedTrainees();
+                });
+            } else {
+                renderScheduleSelectedTrainees();
+            }
+        }
+
+        function renderScheduleTrainerSearchResults(searchTerm) {
+            const resultsContainer = document.getElementById('schedule-trainer-search-results');
+            if(!searchTerm) {
+                resultsContainer.classList.add('d-none');
+                return;
+            }
+            const filtered = allTrainersCache.filter(item => item.full_name.toLowerCase().includes(searchTerm.toLowerCase()));
+            
+            if(filtered.length > 0) {
+                resultsContainer.innerHTML = `<ul class="list-group">${filtered.map(item => `<li class="list-group-item" onclick="selectTrainerForSchedule('${item.id}', '${item.full_name}')">${item.full_name}</li>`).join('')}</ul>`;
+                resultsContainer.classList.remove('d-none');
+            } else {
+                resultsContainer.classList.add('d-none');
+            }
+        }
+
+        function selectTrainerForSchedule(id, name) {
+            document.querySelector('#scheduleForm [name="trainer_id"]').value = id;
+            document.getElementById('selected-schedule-trainer-display').innerHTML = `<span class="badge bg-primary">${name}</span>`;
+            document.getElementById('schedule-trainer-search-input').value = '';
+            document.getElementById('schedule-trainer-search-results').classList.add('d-none');
+        }
+
+        // --- CALENDAR LOGIC ---
+        const appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+
+        async function renderCalendar() {
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+            const monthName = calendarDate.toLocaleString('ar-EG', { month: 'long' });
+            document.getElementById('month-year-display').textContent = `${monthName} ${year}`;
+
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const dayHeaders = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            dayHeaders.forEach(day => {
+                grid.innerHTML += `<div class="calendar-day-header">${day}</div>`;
+            });
+
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                grid.innerHTML += `<div class="calendar-day not-in-month"></div>`;
+            }
+
+            const today = new Date();
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day';
+                if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dayCell.classList.add('today');
+                }
+                
+                const monthStr = String(month + 1).padStart(2, '0');
+                const dayStr = String(i).padStart(2, '0');
+                const dateString = `${year}-${monthStr}-${dayStr}`;
+
+                dayCell.dataset.date = dateString;
+                dayCell.innerHTML = `<span class="day-number">${i}</span><div class="events-container"></div>`;
+                dayCell.addEventListener('click', () => openAppointmentModal(dateString));
+                grid.appendChild(dayCell);
+            }
+            
+            await fetchAndDisplayCalendarEvents(year, month);
+        }
+
+        async function fetchAndDisplayCalendarEvents(year, month) {
+            const monthStr = String(month + 1).padStart(2, '0');
+            const lastDay = new Date(year, month + 1, 0).getDate();
+            const startDate = `${year}-${monthStr}-01`;
+            const endDate = `${year}-${monthStr}-${lastDay}`;
+
+            // Fetch courses
+            const { data: schedules, error: scheduleError } = await supabaseClient
+                .from('schedules')
+                .select('start_date, end_date, courses(name)')
+                .gte('start_date', startDate)
+                .lte('start_date', endDate);
+
+            // Fetch appointments
+            const { data: appointments, error: appointmentError } = await supabaseClient
+                .from('appointments')
+                .select('title, appointment_date')
+                .gte('appointment_date', startDate)
+                .lte('appointment_date', endDate);
+            
+            if (scheduleError) console.error("Error fetching schedules for calendar", scheduleError);
+            if (appointmentError) console.error("Error fetching appointments for calendar", appointmentError);
+
+            if (schedules) {
+                schedules.forEach(event => {
+                    const dayCell = document.querySelector(`.calendar-day[data-date="${event.start_date}"]`);
+                    if (dayCell) {
+                        dayCell.querySelector('.events-container').innerHTML += `<div class="event-dot course">${event.courses.name}</div>`;
+                    }
+                });
+            }
+
+            if (appointments) {
+                 appointments.forEach(event => {
+                    const dayCell = document.querySelector(`.calendar-day[data-date="${event.appointment_date}"]`);
+                    if (dayCell) {
+                        dayCell.querySelector('.events-container').innerHTML += `<div class="event-dot appointment">${event.title}</div>`;
+                    }
+                });
+            }
+        }
+
+        async function openAppointmentModal(dateString) {
+            hideAllTooltips();
+            const form = document.getElementById('appointmentForm');
+            form.reset();
+            form.querySelector('[name="id"]').value = '';
+            form.querySelector('[name="appointment_date"]').value = dateString;
+            document.getElementById('appointment-form-section-title').textContent = 'إضافة موعد جديد';
+            document.getElementById('appointmentModalTitle').textContent = `مواعيد يوم ${dateString}`;
+            
+            const listContainer = document.getElementById('day-appointments-list');
+            listContainer.innerHTML = 'جاري تحميل المواعيد...';
+            
+            const { data: appointments, error } = await supabaseClient
+                .from('appointments')
+                .select('*')
+                .eq('appointment_date', dateString)
+                .order('created_at');
+                
+            if (error) {
+                listContainer.innerHTML = '<div class="alert alert-danger">خطأ في جلب المواعيد.</div>';
+            } else if (appointments.length === 0) {
+                listContainer.innerHTML = '<p class="text-muted">لا توجد مواعيد خاصة لهذا اليوم.</p>';
+            } else {
+                listContainer.innerHTML = `
+                    <h6 class="form-section-title">المواعيد المسجلة:</h6>
+                    <ul class="list-group list-group-flush">
+                        ${appointments.map(apt => `
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <strong>${apt.title}</strong>
+                                    <p class="mb-0 small text-muted">${apt.description || ''}</p>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary me-2" onclick="editAppointment('${apt.id}')"><i class="fas fa-edit"></i></button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="handleDeleteAppointment('${apt.id}', '${dateString}')"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>`;
+            }
+            
+            appointmentModal.show();
+        }
+
+        async function editAppointment(id) {
+            const { data, error } = await supabaseClient.from('appointments').select('*').eq('id', id).single();
+            if (error || !data) {
+                alert('لم يتم العثور على الموعد.');
+                return;
+            }
+            
+            const form = document.getElementById('appointmentForm');
+            form.querySelector('[name="id"]').value = data.id;
+            form.querySelector('[name="title"]').value = data.title;
+            form.querySelector('[name="appointment_date"]').value = data.appointment_date;
+            form.querySelector('[name="description"]').value = data.description;
+            
+            document.getElementById('appointment-form-section-title').textContent = 'تعديل الموعد';
+        }
+
+        function handleDeleteAppointment(id, dateString) {
+            confirmDeletion(async () => {
+                const { error } = await supabaseClient.from('appointments').delete().eq('id', id);
+                if (error) {
+                    alert('خطأ في حذف الموعد.');
+                } else {
+                    alert('تم الحذف بنجاح.');
+                    openAppointmentModal(dateString); 
+                    renderCalendar();
+                }
+            }, 'هل أنت متأكد من حذف هذا الموعد؟');
+        }
+
+        async function handleAppointmentFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            let appointmentData = Object.fromEntries(formData.entries());
+            const id = appointmentData.id;
+            const dateString = appointmentData.appointment_date;
+            
+            delete appointmentData.id;
+
+            const sanitizedData = sanitizeData(appointmentData);
+
+            const { error } = id
+                ? await supabaseClient.from('appointments').update(sanitizedData).eq('id', id)
+                : await supabaseClient.from('appointments').insert([sanitizedData]);
+
+            if (error) {
+                console.error('Error saving appointment:', error);
+                alert('خطأ في حفظ الموعد.');
+            } else {
+                alert('تم حفظ الموعد بنجاح!');
+                form.reset();
+                form.querySelector('[name="id"]').value = '';
+                document.getElementById('appointment-form-section-title').textContent = 'إضافة موعد جديد';
+                openAppointmentModal(dateString);
+                renderCalendar();
+            }
+        }
+
+        // --- INVENTORY LOGIC ---
+        const inventoryTransactionModal = new bootstrap.Modal(document.getElementById('inventoryTransactionModal'));
+        const inventoryDetailModal = new bootstrap.Modal(document.getElementById('inventoryDetailModal'));
+
+        async function fetchInventoryData(searchTerm = '') {
+            showLoader('inventory-results');
+            
+            let itemsQuery = supabaseClient.from('inventory_items').select('id, name');
+            if(searchTerm) {
+                itemsQuery = itemsQuery.ilike('name', `%${searchTerm}%`);
+            }
+            const { data: items, error: itemsError } = await itemsQuery.order('name');
+
+            if (itemsError) {
+                console.error("Error fetching inventory items", itemsError);
+                return;
+            }
+
+            const { data: transactions, error: transError } = await supabaseClient.from('inventory_transactions').select('*');
+            if (transError) {
+                 console.error("Error fetching inventory transactions", transError);
+                 return;
+            }
+
+            const inventoryData = items.map(item => {
+                const itemTransactions = transactions.filter(t => t.item_id === item.id);
+                const totalIn = itemTransactions.filter(t => t.transaction_type === 'in').reduce((sum, t) => sum + t.quantity, 0);
+                const totalOut = itemTransactions.filter(t => t.transaction_type === 'out').reduce((sum, t) => sum + t.quantity, 0);
+                const balance = totalIn - totalOut;
+                return { ...item, totalIn, totalOut, balance };
+            });
+
+            displayInventory(inventoryData);
+        }
+
+        function getBalanceClass(balance) {
+            if (balance <= 0) return 'balance-danger';
+            if (balance <= 10) return 'balance-low';
+            return 'balance-ok';
+        }
+
+        function displayInventory(inventoryData) {
+            const container = document.getElementById('inventory-results');
+            if (inventoryData.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">لا توجد أصناف في المخزون. أضف صنفاً جديداً للبدء.</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="table table-bordered table-hover align-middle inventory-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>الصنف</th>
+                            <th>إجمالي الداخل</th>
+                            <th>إجمالي الخارج</th>
+                            <th>الرصيد الحالي</th>
+                            <th class="actions-cell text-start">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${inventoryData.map(item => `
+                            <tr id="item-row-${item.id}">
+                                <td class="item-name-cell">
+                                    <span id="item-name-${item.id}">${item.name}</span>
+                                    <input type="text" class="form-control d-none" id="item-input-${item.id}" value="${item.name}">
+                                </td>
+                                <td>${item.totalIn}</td>
+                                <td>${item.totalOut}</td>
+                                <td class="fw-bold ${getBalanceClass(item.balance)}">${item.balance}</td>
+                                <td class="actions-cell text-start" onclick="event.stopPropagation();">
+                                    <div id="actions-view-${item.id}" class="btn-group">
+                                        <button class="btn btn-sm btn-light" onclick="openInventoryDetailModal('${item.id}', '${item.name}')" title="عرض التفاصيل" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fas fa-list-ul text-info"></i></button>
+                                        <button class="btn btn-sm btn-light" onclick="toggleItemEditMode('${item.id}', true)" title="تعديل الاسم" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fas fa-edit text-primary"></i></button>
+                                        <button class="btn btn-sm btn-light" onclick="handleDeleteInventoryItem('${item.id}', '${item.name}')" title="حذف الصنف" data-bs-toggle="tooltip" data-bs-placement="top"><i class="fas fa-trash text-danger"></i></button>
+                                    </div>
+                                    <div id="actions-edit-${item.id}" class="d-none btn-group">
+                                        <button class="btn btn-sm btn-light" onclick="handleUpdateInventoryItem('${item.id}')" title="حفظ"><i class="fas fa-check text-success"></i></button>
+                                        <button class="btn btn-sm btn-light" onclick="toggleItemEditMode('${item.id}', false)" title="إلغاء"><i class="fas fa-times text-secondary"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>`;
+            initializeTooltips();
+        }
+        
+        function toggleItemEditMode(itemId, isEditing) {
+            hideAllTooltips();
+            document.getElementById(`item-name-${itemId}`).classList.toggle('d-none', isEditing);
+            document.getElementById(`item-input-${itemId}`).classList.toggle('d-none', !isEditing);
+            document.getElementById(`actions-view-${itemId}`).classList.toggle('d-none', isEditing);
+            document.getElementById(`actions-edit-${itemId}`).classList.toggle('d-none', !isEditing);
+            if (isEditing) {
+                document.getElementById(`item-input-${itemId}`).focus();
+            }
+        }
+
+        async function handleUpdateInventoryItem(itemId) {
+            const newName = document.getElementById(`item-input-${itemId}`).value.trim();
+            if (!newName) {
+                alert('اسم الصنف لا يمكن أن يكون فارغاً.');
+                return;
+            }
+            const { error } = await supabaseClient.from('inventory_items').update({ name: newName }).eq('id', itemId);
+            if (error) {
+                console.error("Error updating item:", error);
+                alert('خطأ في تحديث الصنف.');
+            } else {
+                fetchInventoryData(); // Refresh the table
+            }
+        }
+
+        function handleDeleteInventoryItem(id, name) {
+            confirmDeletion(async () => {
+                const { error } = await supabaseClient.from('inventory_items').delete().eq('id', id);
+                if (error) {
+                    alert('خطأ في حذف الصنف.');
+                } else {
+                    alert('تم حذف الصنف وجميع حركاته بنجاح.');
+                    fetchInventoryData();
+                }
+            }, `هل أنت متأكد من حذف صنف "${name}"؟ سيتم حذف جميع الحركات المرتبطة به أيضاً.`);
+        }
+
+        async function openInventoryItemModal() {
+            hideAllTooltips();
+            const { value: itemName } = await Swal.fire({
+                title: 'إضافة صنف جديد',
+                input: 'text',
+                inputLabel: 'اسم الصنف',
+                inputPlaceholder: 'أدخل اسم الصنف هنا...',
+                showCancelButton: true,
+                confirmButtonText: 'إضافة',
+                cancelButtonText: 'إلغاء',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'يجب إدخال اسم الصنف!'
+                    }
+                }
+            });
+
+            if (itemName) {
+                const { error } = await supabaseClient.from('inventory_items').insert([{ name: itemName }]);
+                if (error) {
+                    console.error("Error adding inventory item:", error);
+                    Swal.fire('خطأ!', 'حدث خطأ أثناء إضافة الصنف. قد يكون الاسم مكرراً.', 'error');
+                } else {
+                    Swal.fire('تم!', 'تمت إضافة الصنف بنجاح.', 'success');
+                    await cacheInventoryItems();
+                    fetchInventoryData();
+                }
+            }
+        }
+        
+        async function cacheInventoryItems() {
+            const { data, error } = await supabaseClient.from('inventory_items').select('id, name').order('name');
+            if (error) console.error("Error caching inventory items", error);
+            else allInventoryItemsCache = data || [];
+        }
+
+        async function openTransactionModal(transactionId = null) {
+            hideAllTooltips();
+            const form = document.getElementById('inventoryTransactionForm');
+            form.reset();
+            const modalTitle = document.getElementById('inventoryTransactionModalTitle');
+            
+            form.querySelector('[name="item_id"]').value = '';
+            document.getElementById('selected-inventory-item-display').innerHTML = '';
+            document.getElementById('inventory-item-search-input').value = '';
+
+            if (allInventoryItemsCache.length === 0) {
+                await cacheInventoryItems();
+            }
+
+            if (transactionId) {
+                modalTitle.textContent = 'تعديل حركة مخزون';
+                const { data, error } = await supabaseClient.from('inventory_transactions').select('*, inventory_items(name)').eq('id', transactionId).single();
+                if (error || !data) {
+                    alert('خطأ: لم يتم العثور على الحركة.');
+                    return;
+                }
+                form.querySelector('[name="id"]').value = data.id;
+                selectInventoryItem(data.item_id, data.inventory_items.name);
+                form.querySelector('[name="transaction_type"]').value = data.transaction_type;
+                form.querySelector('[name="quantity"]').value = data.quantity;
+                form.querySelector('[name="transaction_date"]').value = data.transaction_date;
+                form.querySelector('[name="description"]').value = data.description;
+            } else {
+                modalTitle.textContent = 'إضافة حركة مخزون';
+                form.querySelector('[name="id"]').value = '';
+                form.querySelector('[name="transaction_date"]').value = getTodayDateString();
+            }
+            
+            if(detailModalInstance) detailModalInstance.hide();
+            setTimeout(() => transactionModalInstance.show(), 200);
+        }
+        
+        async function openInventoryDetailModal(itemId, itemName) {
+            hideAllTooltips();
+            lastOpenedDetail = { itemId, itemName };
+            document.getElementById('inventoryDetailModalTitle').textContent = `تفاصيل حركات: ${itemName}`;
+            const body = document.getElementById('inventoryDetailModalBody');
+            body.innerHTML = '<div class="loader"><div class="spinner-border text-primary" role="status"></div></div>';
+            inventoryDetailModal.show();
+
+            const { data, error } = await supabaseClient
+                .from('inventory_transactions')
+                .select('*')
+                .eq('item_id', itemId)
+                .order('transaction_date', { ascending: false });
+
+            if (error) {
+                body.innerHTML = '<div class="alert alert-danger">خطأ في جلب الحركات.</div>';
+                return;
+            }
+
+            if (data.length === 0) {
+                body.innerHTML = '<div class="alert alert-info">لا توجد حركات مسجلة لهذا الصنف.</div>';
+                return;
+            }
+
+            body.innerHTML = `
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>النوع</th>
+                            <th>الكمية</th>
+                            <th>البيان</th>
+                            <th class="text-end">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map(t => `
+                            <tr>
+                                <td>${t.transaction_date}</td>
+                                <td>${t.transaction_type === 'in' ? '<span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">داخل</span>' : '<span class="badge bg-danger-subtle text-danger-emphasis border border-danger-subtle">خارج</span>'}</td>
+                                <td class="fw-bold">${t.quantity}</td>
+                                <td class="text-muted">${t.description || '-'}</td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-light" onclick="openTransactionModal('${t.id}')" title="تعديل"><i class="fas fa-edit text-primary"></i></button>
+                                    <button class="btn btn-sm btn-light" onclick="handleDeleteInventoryTransaction('${t.id}', '${itemId}', '${itemName}')" title="حذف"><i class="fas fa-trash text-danger"></i></button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            initializeTooltips();
+        }
+
+        function handleDeleteInventoryTransaction(transactionId, itemId, itemName) {
+            confirmDeletion(async () => {
+                const { error } = await supabaseClient.from('inventory_transactions').delete().eq('id', transactionId);
+                if (error) {
+                    alert('خطأ في حذف الحركة.');
+                } else {
+                    alert('تم حذف الحركة بنجاح.');
+                    openInventoryDetailModal(itemId, itemName); // Refresh detail modal
+                    fetchInventoryData(); // Refresh main inventory table
+                }
+            }, 'هل أنت متأكد من حذف هذه الحركة؟ هذا الإجراء لا يمكن التراجع عنه.');
+        }
+
+        async function handleInventoryTransactionSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const transactionData = Object.fromEntries(formData.entries());
+            const id = transactionData.id;
+
+            if (!transactionData.item_id) {
+                alert('الرجاء اختيار صنف.');
+                return;
+            }
+
+            const dataToSubmit = { ...transactionData };
+            delete dataToSubmit.id;
+            
+            const { error } = id
+                ? await supabaseClient.from('inventory_transactions').update(dataToSubmit).eq('id', id)
+                : await supabaseClient.from('inventory_transactions').insert([dataToSubmit]);
+
+            if (error) {
+                console.error("Error saving transaction:", error);
+                alert('خطأ في حفظ الحركة.');
+            } else {
+                alert('تم حفظ الحركة بنجاح.');
+                document.getElementById('inventoryTransactionModal')._transactionWasSaved = true;
+                inventoryTransactionModal.hide();
+                fetchInventoryData();
+            }
+        }
+        
+        function renderInventoryItemSearchResults(searchTerm) {
+            const resultsContainer = document.getElementById('inventory-item-search-results');
+            if(!searchTerm) {
+                resultsContainer.classList.add('d-none');
+                return;
+            }
+            const filtered = allInventoryItemsCache.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            
+            if(filtered.length > 0) {
+                resultsContainer.innerHTML = `<ul class="list-group">${filtered.map(item => `<li class="list-group-item" onclick="selectInventoryItem('${item.id}', '${item.name}')">${item.name}</li>`).join('')}</ul>`;
+                resultsContainer.classList.remove('d-none');
+            } else {
+                resultsContainer.classList.add('d-none');
+            }
+        }
+
+        function selectInventoryItem(id, name) {
+            document.querySelector('#inventoryTransactionForm [name="item_id"]').value = id;
+            document.getElementById('selected-inventory-item-display').innerHTML = `<span class="badge bg-primary">${name}</span>`;
+            document.getElementById('inventory-item-search-input').value = '';
+            document.getElementById('inventory-item-search-results').classList.add('d-none');
+        }
+
+
+        // --- APP INITIALIZATION ---
+        function initializeApp() {
+            // Initialize Modals
+            transactionModalInstance = new bootstrap.Modal(document.getElementById('inventoryTransactionModal'));
+            detailModalInstance = new bootstrap.Modal(document.getElementById('inventoryDetailModal'));
+
+            // Fetch initial data
+            fetchSummaryData();
+            fetchTrainees();
+            fetchTrainers();
+            fetchSchedules();
+            cacheAllTrainees();
+            cacheAllTrainers();
+            renderCalendar();
+            fetchInventoryData();
+            cacheInventoryItems();
+
+            // Setup event listeners
+            document.getElementById('trainee-search-btn').addEventListener('click', () => fetchTrainees(document.getElementById('trainee-search-input').value));
+            document.getElementById('trainer-search-btn').addEventListener('click', () => fetchTrainers(document.getElementById('trainer-search-input').value));
+            document.getElementById('schedule-search-btn').addEventListener('click', () => fetchSchedules(document.getElementById('schedule-search-input').value));
+            document.getElementById('inventory-search-btn').addEventListener('click', () => fetchInventoryData(document.getElementById('inventory-search-input').value));
+            
+            document.getElementById('addTrainerBtn').addEventListener('click', () => openTrainerModal());
+            document.getElementById('addTraineeBtn').addEventListener('click', () => openTraineeModal());
+            document.getElementById('addScheduleBtn').addEventListener('click', () => openScheduleModal());
+            document.getElementById('addInventoryItemBtn').addEventListener('click', openInventoryItemModal);
+            document.getElementById('addInventoryTransactionBtn').addEventListener('click', () => openTransactionModal());
+
+            document.getElementById('traineeForm').addEventListener('submit', handleTraineeFormSubmit);
+            document.getElementById('trainerForm').addEventListener('submit', handleTrainerFormSubmit);
+            document.getElementById('scheduleForm').addEventListener('submit', handleScheduleFormSubmit);
+            document.getElementById('attendanceForm').addEventListener('submit', handleAttendanceFormSubmit);
+            document.getElementById('appointmentForm').addEventListener('submit', handleAppointmentFormSubmit);
+            document.getElementById('inventoryTransactionForm').addEventListener('submit', handleInventoryTransactionSubmit);
+            
+            document.getElementById('course-search-input').addEventListener('keyup', (e) => renderCourseSearchResults(e.target.value));
+            document.getElementById('schedule-trainee-search-input').addEventListener('keyup', (e) => renderScheduleTraineeSearchResults(e.target.value));
+            document.getElementById('inventory-item-search-input').addEventListener('keyup', (e) => renderInventoryItemSearchResults(e.target.value));
+            document.getElementById('schedule-course-search-input').addEventListener('keyup', (e) => renderScheduleCourseSearchResults(e.target.value));
+            document.getElementById('schedule-trainer-search-input').addEventListener('keyup', (e) => renderScheduleTrainerSearchResults(e.target.value));
+            
+            document.getElementById('courseStatus').addEventListener('change', function() {
+                toggleScheduleFormLock(this.checked);
+            });
+
+            document.getElementById('prev-month-btn').addEventListener('click', () => {
+                calendarDate.setMonth(calendarDate.getMonth() - 1);
+                renderCalendar();
+            });
+            document.getElementById('next-month-btn').addEventListener('click', () => {
+                calendarDate.setMonth(calendarDate.getMonth() + 1);
+                renderCalendar();
+            });
+            
+            // Modal chaining logic
+            const transactionModalEl = document.getElementById('inventoryTransactionModal');
+            transactionModalEl.addEventListener('hidden.bs.modal', () => {
+                if (!transactionModalEl._transactionWasSaved && lastOpenedDetail.itemId) {
+                    detailModalInstance.show();
+                }
+                transactionModalEl._transactionWasSaved = false; // Reset flag
+            });
+
+        }
+        
+        function initializeTooltips() {
+            // First, dispose of any existing tooltips to avoid duplicates
+            const existingTooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            existingTooltips.forEach(el => {
+                const tooltip = bootstrap.Tooltip.getInstance(el);
+                if (tooltip) {
+                    tooltip.dispose();
+                }
+            });
+            // Now, initialize new ones
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        }
+
+        document.addEventListener('DOMContentLoaded', checkUser);
+
+    </script>
+</body>
+</html>
