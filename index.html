@@ -108,6 +108,34 @@
             cursor: not-allowed;
         }
 
+        /* --- Theme Overrides --- */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: #16a085; /* Darker Turquoise */
+            border-color: #16a085;
+        }
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        .badge.bg-primary {
+             background-color: var(--primary-color) !important;
+        }
+        .spinner-border.text-primary {
+            color: var(--primary-color) !important;
+        }
+
+
         /* --- Calendar Styles --- */
         #calendar-container {
             background-color: #fff;
